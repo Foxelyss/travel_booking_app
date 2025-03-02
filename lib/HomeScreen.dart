@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 
@@ -13,6 +12,8 @@ Future<void> asda() async {
 }
 
 class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -20,16 +21,16 @@ class HomeScreen extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
         Container(
-          child: Text("Туры со скидкой 50%"),
           color: Colors.blueGrey,
           height: 120,
           width: 120,
+          child: Text("Туры со скидкой 50%"),
         ),
         Container(
-          child: Text("Туры со скидкой 50%"),
           color: Colors.blueGrey,
           height: 120,
           width: 120,
+          child: Text("Туры со скидкой 50%"),
         ),
       ],
     ));
