@@ -40,15 +40,15 @@ class Searchscreen extends State<SearchScreen> {
   }
 
   Future<void> searchTransport() async {
-    int wanted_time =
+    int wantedTime =
         nextGoing ? 0 : selectedDate!.millisecondsSinceEpoch ~/ 1000;
-    print(wanted_time);
+    print(wantedTime);
     http.Response asdsd =
         await http.get(Uri.http(serverURI, '/api/search/search', {
       'point_a': '$pointA',
       'point_b': '$pointB',
       'quantity': '12',
-      'wanted_time': '$wanted_time'
+      'wanted_time': '$wantedTime'
     }));
     print(pointA);
     print(pointB);
@@ -69,16 +69,22 @@ class Searchscreen extends State<SearchScreen> {
 
   //api/booking
 
-  Future<void> book(int i) async {
-    http.Response asdsd = await http
-        .get(Uri.http(serverURI, '/api/booking/book', {'transporting': '$i'}));
+  Future<void> book(int transporting, String name, String surname,
+      String middle_name, String email, int passport, int phone) async {
+    http.Response asdsd =
+        await http.post(Uri.http(serverURI, '/api/booking/book', {
+      "transporting": "$transporting",
+      "name": "$name",
+      "surname": "$surname",
+      "middle_name": "$middle_name",
+      "email": "$email",
+      "passport": "$passport",
+      "phone": "$phone"
+    }));
     print(pointA);
     print(pointB);
-    print(jsonDecode(utf8.decode(asdsd.bodyBytes)));
-    var pointsJson = jsonDecode(utf8.decode(asdsd.bodyBytes));
-    setState(() {
-      _offers = Transport.fromJsonList(pointsJson);
-    });
+    print(utf8.decode(asdsd.bodyBytes));
+    // var pointsJson = jsonDecode(utf8.decode(asdsd.bodyBytes));
   }
 
   Future<void> getbookings() async {
@@ -239,7 +245,7 @@ class Searchscreen extends State<SearchScreen> {
                   TextButton(
                     onPressed: obj.freespacecount == 0
                         ? null
-                        : () => {openBookingMenu(context, obj.id)},
+                        : () => {openAboutTransportMenu(context, obj)},
                     style: ButtonStyle(
                       backgroundColor:
                           WidgetStateProperty.all<Color>(Colors.blueAccent),
@@ -414,11 +420,89 @@ class Searchscreen extends State<SearchScreen> {
         });
   }
 
-  final _formKey = GlobalKey<FormState>();
+  void openAboutTransportMenu(context, Transport asd) {
+    var time = "";
+    var diff = asd.end.difference(asd.start);
+    var hours = diff.inHours - diff.inDays * 24;
 
-  void openBookingMenu(context, asd) {
+    if (diff.inDays != 0) {
+      time += "${diff.inDays} Дней ";
+    }
+    if (hours != 0) {
+      time += "$hours Часов";
+    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (BuildContext bc) {
+        return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setModalState) {
+          var date = selectedDate;
+          return Scaffold(
+              appBar: AppBar(title: const Text('О транспорте')),
+              body: Center(
+                  child: Flexible(
+                child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: 450),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text('Маршрут: ${asd.name}'),
+                        Row(
+                          children: [
+                            Text('${asd.start_point}'),
+                            Expanded(child: Divider()),
+                            Text(
+                              asd.end_point,
+                              textAlign: TextAlign.right,
+                            )
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(DateFormat('dd.MM.yyyy\nH:m')
+                                .format(asd.start)),
+                            Expanded(
+                              child: Divider(),
+                            ),
+                            Text(
+                              DateFormat('dd.MM.yyyy\nH:m').format(asd.end),
+                              textAlign: TextAlign.right,
+                            )
+                          ],
+                        ),
+                        Text('Приблизительное время поездки: $time'),
+                        Text(
+                            'Выполняется компанией ${asd.company}. Осуществляется перевозка ${asd.mean}'),
+                        Chip(
+                            label: Text(
+                                "${asd.freespacecount}/${asd.spacecount} мест свободны")),
+                        ElevatedButton(
+                          onPressed: () {
+                            openBookingMenu(context, asd.id);
+                          },
+                          child: const Text('Забронировать'),
+                        ),
+                      ],
+                    )),
+              )));
+        });
+      }),
+    );
+
+    // openBookingMenu(context, obj.id);
+  }
+
+  final _formKey = GlobalKey<FormState>();
+  final mysurnameController = TextEditingController();
+  final mynameController = TextEditingController();
+  final mymidnameController = TextEditingController();
+  final mypassController = TextEditingController();
+  final myphoneController = TextEditingController();
+  final myMailController = TextEditingController();
+
+  void openBookingMenu(context1, asd) {
     showDialog(
-        context: context,
+        context: context1,
         builder: (BuildContext bc) {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setModalState) {
@@ -431,99 +515,109 @@ class Searchscreen extends State<SearchScreen> {
                       borderRadius: BorderRadius.all(Radius.circular(10))),
                   child: Container(
                     padding: EdgeInsets.all(15),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text("Введите ваши данные"),
-                        IntrinsicWidth(
-                            child: Form(
-                          key: _formKey,
-                          child: Column(
-                            children: <Widget>[
-                              TextFormField(
-                                decoration: InputDecoration.collapsed(
-                                    hintText: 'Фамилия'),
-                                // The validator receives the text that the user has entered.
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter some text';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              TextFormField(
-                                decoration:
-                                    InputDecoration.collapsed(hintText: 'Имя'),
-                                // The validator receives the text that the user has entered.
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter some text';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              TextFormField(
-                                decoration: InputDecoration.collapsed(
-                                    hintText: 'Отчество'),
-                                // The validator receives the text that the user has entered.
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter some text';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              TextFormField(
-                                decoration: InputDecoration.collapsed(
-                                    hintText: 'Пасспорт'),
-                                // The validator receives the text that the user has entered.
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter some text';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              TextFormField(
-                                decoration: InputDecoration.collapsed(
-                                    hintText: 'Телефон'),
-                                // The validator receives the text that the user has entered.
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter some text';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              TextFormField(
-                                decoration: InputDecoration.collapsed(
-                                    hintText: 'Эл. почта'),
-                                // The validator receives the text that the user has entered.
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter some text';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  // Validate returns true if the form is valid, or false otherwise.
-                                  if (_formKey.currentState!.validate()) {
-                                    // If the form is valid, display a snackbar. In the real world,
-                                    // you'd often call a server or save the information in a database.
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Принято!')),
-                                    );
-                                  }
-                                },
-                                child: const Text('Забронировать билет'),
-                              ),
-                            ],
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          Text("Введите ваши данные"),
+                          TextFormField(
+                            decoration:
+                                InputDecoration.collapsed(hintText: 'Фамилия'),
+                            controller: mysurnameController,
+                            // The validator receives the text that the user has entered.
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter some text';
+                              }
+                              return null;
+                            },
                           ),
-                        )),
-                      ],
+                          TextFormField(
+                            decoration:
+                                InputDecoration.collapsed(hintText: 'Имя'),
+                            controller: mynameController,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter some text';
+                              }
+                              return null;
+                            },
+                          ),
+                          TextFormField(
+                            decoration:
+                                InputDecoration.collapsed(hintText: 'Отчество'),
+                            controller: mymidnameController,
+                            // The validator receives the text that the user has entered.
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter some text';
+                              }
+                              return null;
+                            },
+                          ),
+                          TextFormField(
+                            decoration:
+                                InputDecoration.collapsed(hintText: 'Пасспорт'),
+                            controller: mypassController,
+                            // The validator receives the text that the user has entered.
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter some text';
+                              }
+                              return null;
+                            },
+                          ),
+                          TextFormField(
+                            decoration:
+                                InputDecoration.collapsed(hintText: 'Телефон'),
+                            // The validator receives the text that the user has entered.
+                            controller: myphoneController,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter some text';
+                              }
+                              return null;
+                            },
+                          ),
+                          TextFormField(
+                            decoration: InputDecoration.collapsed(
+                                hintText: 'Эл. почта'),
+                            controller: myMailController,
+                            // The validator receives the text that the user has entered.
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter some text';
+                              }
+                              return null;
+                            },
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              // Validate returns true if the form is valid, or false otherwise.
+                              if (_formKey.currentState!.validate()) {
+                                // If the form is valid, display a snackbar. In the real world,
+                                // you'd often call a server or save the information in a database.
+
+                                book(
+                                    asd,
+                                    mynameController.text,
+                                    mysurnameController.text,
+                                    mymidnameController.text,
+                                    myMailController.text,
+                                    int.parse(mypassController.text),
+                                    int.parse(myphoneController.text));
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Принято!')),
+                                );
+                                Navigator.of(context).pop();
+                                Navigator.of(context1).pop();
+                              }
+                            },
+                            child: const Text('Забронировать билет'),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

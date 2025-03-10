@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
 import 'dart:async';
@@ -15,17 +16,25 @@ Future<void> asda() async {
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
+  static var myphoneController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Center(
         child: Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
-        Text("Учётка  "),
-        // TextButton(onPressed: asda, child: Text("Обновить данные")),
+        TextField(
+          decoration: InputDecoration.collapsed(hintText: 'Эл. почта'),
+          controller: myphoneController,
+        ),
         TextButton(onPressed: asda, child: Text("Чеки")),
         TextButton(onPressed: asda, child: Text("Отмена бронирования")),
-        TextButton(onPressed: asda, child: Text("Выход"))
+        TextButton(
+            onPressed: () {
+              SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+            },
+            child: Text("Выход"))
       ],
     ));
   }
