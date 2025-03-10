@@ -29,9 +29,11 @@ class Searchscreen extends State<SearchScreen> {
   DateTime? selectedDate;
   bool nextGoing = false;
 
+  final serverURI = 'foxelyss-ms7c95.lan:8080';
+
   Future<void> getPoints() async {
-    http.Response asdsd = await http
-        .get(Uri.http('foxelyss-ms7c95.lan:8080', '/api/search/points'));
+    http.Response asdsd =
+        await http.get(Uri.http(serverURI, '/api/search/points'));
 
     var pointsJson = jsonDecode(utf8.decode(asdsd.bodyBytes));
     points = Point.fromJsonList(pointsJson);
@@ -41,8 +43,8 @@ class Searchscreen extends State<SearchScreen> {
     int wanted_time =
         nextGoing ? 0 : selectedDate!.millisecondsSinceEpoch ~/ 1000;
     print(wanted_time);
-    http.Response asdsd = await http
-        .get(Uri.http('foxelyss-ms7c95.lan:8080', '/api/search/search', {
+    http.Response asdsd =
+        await http.get(Uri.http(serverURI, '/api/search/search', {
       'point_a': '$pointA',
       'point_b': '$pointB',
       'quantity': '12',
@@ -58,8 +60,8 @@ class Searchscreen extends State<SearchScreen> {
   }
 
   Future<void> getPoint() async {
-    http.Response asdsd = await http
-        .get(Uri.http('foxelyss-ms7c95.lan:8080', '/api/search/points'));
+    http.Response asdsd =
+        await http.get(Uri.http(serverURI, '/api/search/points'));
 
     var pointsJson = jsonDecode(utf8.decode(asdsd.bodyBytes));
     points = Point.fromJsonList(pointsJson);
@@ -68,8 +70,8 @@ class Searchscreen extends State<SearchScreen> {
   //api/booking
 
   Future<void> book(int i) async {
-    http.Response asdsd = await http.get(Uri.http('foxelyss-ms7c95.lan:8080',
-        '/api/booking/book', {'transporting': '$i'}));
+    http.Response asdsd = await http
+        .get(Uri.http(serverURI, '/api/booking/book', {'transporting': '$i'}));
     print(pointA);
     print(pointB);
     print(jsonDecode(utf8.decode(asdsd.bodyBytes)));
@@ -80,7 +82,7 @@ class Searchscreen extends State<SearchScreen> {
   }
 
   Future<void> getbookings() async {
-    http.Response asdsd = await http.get(Uri.http('foxelyss-ms7c95.lan:8080',
+    http.Response asdsd = await http.get(Uri.http(serverURI,
         '/api/booking/books', {'point_a': '$pointA', 'point_b': '$pointB'}));
     print(pointA);
     print(pointB);
@@ -94,8 +96,8 @@ class Searchscreen extends State<SearchScreen> {
 //api/business
 
   Future<void> addTransport() async {
-    http.Response asdsd = await http.get(Uri.http('foxelyss-ms7c95.lan:8080',
-        '/api/search/search', {'point_a': '$pointA', 'point_b': '$pointB'}));
+    http.Response asdsd =
+        await http.get(Uri.http(serverURI, '/api/business/add_transport', {}));
     print(pointA);
     print(pointB);
     print(jsonDecode(utf8.decode(asdsd.bodyBytes)));
@@ -108,8 +110,8 @@ class Searchscreen extends State<SearchScreen> {
 //api/about
 
   Future<void> aboutTransport() async {
-    http.Response asdsd = await http.get(Uri.http('foxelyss-ms7c95.lan:8080',
-        '/api/search/search', {'point_a': '$pointA', 'point_b': '$pointB'}));
+    http.Response asdsd = await http.get(Uri.http(serverURI,
+        '/api/about/transport', {'point_a': '$pointA', 'point_b': '$pointB'}));
     print(pointA);
     print(pointB);
     print(jsonDecode(utf8.decode(asdsd.bodyBytes)));
@@ -120,8 +122,8 @@ class Searchscreen extends State<SearchScreen> {
   }
 
   Future<void> aboutCompany() async {
-    http.Response asdsd = await http.get(Uri.http('foxelyss-ms7c95.lan:8080',
-        '/api/search/search', {'point_a': '$pointA', 'point_b': '$pointB'}));
+    http.Response asdsd = await http.get(Uri.http(serverURI,
+        '/api/about/company', {'point_a': '$pointA', 'point_b': '$pointB'}));
     print(pointA);
     print(pointB);
     print(jsonDecode(utf8.decode(asdsd.bodyBytes)));
@@ -134,8 +136,8 @@ class Searchscreen extends State<SearchScreen> {
   //api/admin
 
   Future<void> addPoint() async {
-    http.Response asdsd = await http.get(Uri.http('foxelyss-ms7c95.lan:8080',
-        '/api/search/search', {'point_a': '$pointA', 'point_b': '$pointB'}));
+    http.Response asdsd = await http.get(Uri.http(serverURI,
+        '/api/admin/add_point', {'point_a': '$pointA', 'point_b': '$pointB'}));
     print(pointA);
     print(pointB);
     print(jsonDecode(utf8.decode(asdsd.bodyBytes)));
@@ -146,8 +148,10 @@ class Searchscreen extends State<SearchScreen> {
   }
 
   Future<void> createCompany() async {
-    http.Response asdsd = await http.get(Uri.http('foxelyss-ms7c95.lan:8080',
-        '/api/search/search', {'point_a': '$pointA', 'point_b': '$pointB'}));
+    http.Response asdsd = await http.get(Uri.http(
+        serverURI,
+        '/api/admin/create_company',
+        {'point_a': '$pointA', 'point_b': '$pointB'}));
     print(pointA);
     print(pointB);
     print(jsonDecode(utf8.decode(asdsd.bodyBytes)));
