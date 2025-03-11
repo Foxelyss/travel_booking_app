@@ -70,14 +70,14 @@ class Searchscreen extends State<SearchScreen> {
   //api/booking
 
   Future<void> book(int transporting, String name, String surname,
-      String middle_name, String email, int passport, int phone) async {
+      String middleName, String email, int passport, int phone) async {
     http.Response asdsd =
         await http.post(Uri.http(serverURI, '/api/booking/book', {
       "transporting": "$transporting",
-      "name": "$name",
-      "surname": "$surname",
-      "middle_name": "$middle_name",
-      "email": "$email",
+      "name": name,
+      "surname": surname,
+      "middle_name": middleName,
+      "email": email,
       "passport": "$passport",
       "phone": "$phone"
     }));
@@ -85,18 +85,6 @@ class Searchscreen extends State<SearchScreen> {
     print(pointB);
     print(utf8.decode(asdsd.bodyBytes));
     // var pointsJson = jsonDecode(utf8.decode(asdsd.bodyBytes));
-  }
-
-  Future<void> getbookings() async {
-    http.Response asdsd = await http.get(Uri.http(serverURI,
-        '/api/booking/books', {'point_a': '$pointA', 'point_b': '$pointB'}));
-    print(pointA);
-    print(pointB);
-    print(jsonDecode(utf8.decode(asdsd.bodyBytes)));
-    var pointsJson = jsonDecode(utf8.decode(asdsd.bodyBytes));
-    setState(() {
-      _offers = Transport.fromJsonList(pointsJson);
-    });
   }
 
 //api/business
@@ -169,23 +157,24 @@ class Searchscreen extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return Padding(
+        padding: const EdgeInsets.all(3.0),
         child: Column(children: [
-      InkWell(
-        child: searchHint(),
-        onTap: () {
-          openSearchMenu(context);
-        },
-      ),
-      Expanded(
-        child: ListView.builder(
-          itemCount: _offers.length,
-          itemBuilder: (context, index) {
-            return createTransporting(_offers[index]);
-          },
-        ),
-      )
-    ]));
+          InkWell(
+            child: searchHint(),
+            onTap: () {
+              openSearchMenu(context);
+            },
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _offers.length,
+              itemBuilder: (context, index) {
+                return createTransporting(_offers[index]);
+              },
+            ),
+          )
+        ]));
   }
 
   Widget createTransporting(Transport obj) {
@@ -300,7 +289,8 @@ class Searchscreen extends State<SearchScreen> {
               builder: (BuildContext context, StateSetter setModalState) {
             var date = selectedDate;
             return SizedBox(
-              height: MediaQuery.of(context).size.height * 0.3,
+              // height: MediaQuery.of(context).size.height * 0.3,
+
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -439,52 +429,53 @@ class Searchscreen extends State<SearchScreen> {
           var date = selectedDate;
           return Scaffold(
               appBar: AppBar(title: const Text('О транспорте')),
-              body: Center(
+              body: Padding(
+                  padding: const EdgeInsets.all(8.0),
                   child: Flexible(
-                child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: 450),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text('Маршрут: ${asd.name}'),
-                        Row(
+                    child: ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: 450),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Text('${asd.start_point}'),
-                            Expanded(child: Divider()),
-                            Text(
-                              asd.end_point,
-                              textAlign: TextAlign.right,
-                            )
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text(DateFormat('dd.MM.yyyy\nH:m')
-                                .format(asd.start)),
-                            Expanded(
-                              child: Divider(),
+                            Text('Маршрут: ${asd.name}'),
+                            Row(
+                              children: [
+                                Text(asd.start_point),
+                                Expanded(child: Divider()),
+                                Text(
+                                  asd.end_point,
+                                  textAlign: TextAlign.right,
+                                )
+                              ],
                             ),
+                            Row(
+                              children: [
+                                Text(DateFormat('dd.MM.yyyy\nH:m')
+                                    .format(asd.start)),
+                                Expanded(
+                                  child: Divider(),
+                                ),
+                                Text(
+                                  DateFormat('dd.MM.yyyy\nH:m').format(asd.end),
+                                  textAlign: TextAlign.right,
+                                )
+                              ],
+                            ),
+                            Text('Приблизительное время поездки: $time'),
                             Text(
-                              DateFormat('dd.MM.yyyy\nH:m').format(asd.end),
-                              textAlign: TextAlign.right,
-                            )
+                                'Выполняется компанией ${asd.company}. Осуществляется перевозка ${asd.mean}'),
+                            Chip(
+                                label: Text(
+                                    "${asd.freespacecount}/${asd.spacecount} мест свободны")),
+                            ElevatedButton(
+                              onPressed: () {
+                                openBookingMenu(context, asd.id);
+                              },
+                              child: const Text('Забронировать'),
+                            ),
                           ],
-                        ),
-                        Text('Приблизительное время поездки: $time'),
-                        Text(
-                            'Выполняется компанией ${asd.company}. Осуществляется перевозка ${asd.mean}'),
-                        Chip(
-                            label: Text(
-                                "${asd.freespacecount}/${asd.spacecount} мест свободны")),
-                        ElevatedButton(
-                          onPressed: () {
-                            openBookingMenu(context, asd.id);
-                          },
-                          child: const Text('Забронировать'),
-                        ),
-                      ],
-                    )),
-              )));
+                        )),
+                  )));
         });
       }),
     );

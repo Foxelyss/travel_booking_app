@@ -17,22 +17,26 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
+      child: Expanded(
+          child: SingleChildScrollView(
         child: Column(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: <Widget>[
-        Container(
-          color: Colors.blueGrey,
-          height: 120,
-          width: 120,
-          child: Text("Туры со скидкой 50%"),
-        ),
-        Container(
-          color: Colors.blueGrey,
-          height: 120,
-          width: 120,
-          child: Text("Туры со скидкой 50%"),
-        ),
-      ],
-    ));
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            spacing: 12,
+            children: <Widget>[
+              Container(
+                color: Colors.blueGrey,
+                height: 320,
+                width: 320,
+                child: Image(image: AssetImage('assets/ad1.png')),
+              ),
+              Container(
+                color: Colors.blueGrey,
+                height: 320,
+                width: 320,
+                child: Image(image: AssetImage('assets/ad2.png')),
+              ),
+            ]),
+      )),
+    );
   }
 }
