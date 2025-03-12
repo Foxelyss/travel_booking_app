@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dropdown_search/dropdown_search.dart';
+import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 import 'package:intl/intl.dart';
@@ -269,7 +270,9 @@ class Searchscreen extends State<SearchScreen> {
           ),
           Text(
             selectedDate == null || nextGoing
-                ? "За всё время"
+                ? (pointA == -1
+                    ? "Нажмите чтобы изменить критерии поиска"
+                    : "За всё время")
                 : DateFormat('На dd.MM.yyyy H:m\nПо близости ко времени')
                     .format(selectedDate!),
           )
@@ -431,7 +434,7 @@ class Searchscreen extends State<SearchScreen> {
               appBar: AppBar(title: const Text('О транспорте')),
               body: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Flexible(
+                  child: Center(
                     child: ConstrainedBox(
                         constraints: BoxConstraints(maxWidth: 450),
                         child: Column(
@@ -487,9 +490,17 @@ class Searchscreen extends State<SearchScreen> {
   final mysurnameController = TextEditingController();
   final mynameController = TextEditingController();
   final mymidnameController = TextEditingController();
-  final mypassController = TextEditingController();
-  final myphoneController = TextEditingController();
+  final mypassController = MaskedTextController(mask: '0000 000000');
+  final myphoneController = MaskedTextController(mask: '8 (000) 000 00-00');
   final myMailController = TextEditingController();
+
+  String? nameTest(value) {
+    var reg = RegExp("^([А-Яа-я]{3,30})\$");
+    if (value == null || value.isEmpty || !reg.hasMatch(value)) {
+      return 'Введите настоящие данные';
+    }
+    return null;
+  }
 
   void openBookingMenu(context1, asd) {
     showDialog(
@@ -497,7 +508,6 @@ class Searchscreen extends State<SearchScreen> {
         builder: (BuildContext bc) {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setModalState) {
-            var date = selectedDate;
             return SafeArea(
               child: Container(
                 padding: EdgeInsets.all(0),
@@ -512,92 +522,113 @@ class Searchscreen extends State<SearchScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
                           Text("Введите ваши данные"),
-                          TextFormField(
-                            decoration:
-                                InputDecoration.collapsed(hintText: 'Фамилия'),
-                            controller: mysurnameController,
-                            // The validator receives the text that the user has entered.
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter some text';
-                              }
-                              return null;
-                            },
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Фамилия"),
+                              TextFormField(
+                                  decoration: InputDecoration.collapsed(
+                                      hintText: 'Фамилия'),
+                                  controller: mysurnameController,
+                                  validator: nameTest),
+                            ],
                           ),
-                          TextFormField(
-                            decoration:
-                                InputDecoration.collapsed(hintText: 'Имя'),
-                            controller: mynameController,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter some text';
-                              }
-                              return null;
-                            },
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Имя"),
+                              TextFormField(
+                                  decoration: InputDecoration.collapsed(
+                                      hintText: 'Имя'),
+                                  controller: mynameController,
+                                  validator: nameTest),
+                            ],
                           ),
-                          TextFormField(
-                            decoration:
-                                InputDecoration.collapsed(hintText: 'Отчество'),
-                            controller: mymidnameController,
-                            // The validator receives the text that the user has entered.
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter some text';
-                              }
-                              return null;
-                            },
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Отчество"),
+                              TextFormField(
+                                  decoration: InputDecoration.collapsed(
+                                      hintText: 'Отчество'),
+                                  controller: mymidnameController,
+                                  validator: nameTest),
+                            ],
                           ),
-                          TextFormField(
-                            decoration:
-                                InputDecoration.collapsed(hintText: 'Пасспорт'),
-                            controller: mypassController,
-                            // The validator receives the text that the user has entered.
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter some text';
-                              }
-                              return null;
-                            },
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Паспорт"),
+                              TextFormField(
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration.collapsed(
+                                    hintText: 'Паспорт'),
+                                controller: mypassController,
+                                validator: (value) {
+                                  if (value == null ||
+                                      value.isEmpty ||
+                                      value.length < 11) {
+                                    return 'Please enter some text';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ],
                           ),
-                          TextFormField(
-                            decoration:
-                                InputDecoration.collapsed(hintText: 'Телефон'),
-                            // The validator receives the text that the user has entered.
-                            controller: myphoneController,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter some text';
-                              }
-                              return null;
-                            },
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Телефон"),
+                              TextFormField(
+                                keyboardType: TextInputType.phone,
+                                decoration: InputDecoration.collapsed(
+                                    hintText: 'Телефон'),
+                                controller: myphoneController,
+                                validator: (value) {
+                                  if (value == null ||
+                                      value.isEmpty ||
+                                      value.length < 17) {
+                                    return 'Введите правильный телефон';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ],
                           ),
-                          TextFormField(
-                            decoration: InputDecoration.collapsed(
-                                hintText: 'Эл. почта'),
-                            controller: myMailController,
-                            // The validator receives the text that the user has entered.
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter some text';
-                              }
-                              return null;
-                            },
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Эл. почта"),
+                              TextFormField(
+                                keyboardType: TextInputType.emailAddress,
+                                decoration: InputDecoration.collapsed(
+                                    hintText: 'Эл. почта'),
+                                controller: myMailController,
+                                // The validator receives the text that the user has entered.
+                                validator: (value) {
+                                  var re = RegExp(
+                                      r'^([A-Za-z0-9.]{1,50})@([A-Za-z0-9.]{1,50})\.([A-Za-z0-9.]{1,5})$');
+                                  if (value == null ||
+                                      value.isEmpty ||
+                                      !re.hasMatch(value)) {
+                                    return 'Введите правильный эл. адрес';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ],
                           ),
                           ElevatedButton(
                             onPressed: () {
-                              // Validate returns true if the form is valid, or false otherwise.
                               if (_formKey.currentState!.validate()) {
-                                // If the form is valid, display a snackbar. In the real world,
-                                // you'd often call a server or save the information in a database.
-
                                 book(
                                     asd,
                                     mynameController.text,
                                     mysurnameController.text,
                                     mymidnameController.text,
                                     myMailController.text,
-                                    int.parse(mypassController.text),
-                                    int.parse(myphoneController.text));
+                                    int.parse(mypassController.unmasked),
+                                    int.parse(myphoneController.unmasked));
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(content: Text('Принято!')),
                                 );

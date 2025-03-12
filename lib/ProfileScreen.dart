@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -21,7 +22,7 @@ class ProfileScreen extends StatelessWidget {
 
   static var _formKey = GlobalKey<FormState>();
   static var myEmailController = TextEditingController();
-  static var mypassController = TextEditingController();
+  static var mypassController = MaskedTextController(mask: '0000 000000');
   static List<dynamic> _offers = <dynamic>[];
 
   Future<void> getbookings() async {
@@ -60,7 +61,7 @@ class ProfileScreen extends StatelessWidget {
               appBar: AppBar(title: const Text('Чеки')),
               body: Padding(
                   padding: const EdgeInsets.all(3.0),
-                  child: Flexible(
+                  child: Center(
                     child: ConstrainedBox(
                       constraints: BoxConstraints(maxWidth: 450),
                       child: ListView.builder(
@@ -104,6 +105,10 @@ class ProfileScreen extends StatelessWidget {
                   onPressed: () {
                     returnBook(context, int.parse(obj["transporting"]),
                         int.parse(obj["id"]));
+                    getbookings();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Обновление данных!')),
+                    );
                   },
                   child: Text("Отказаться"))
             ],
@@ -139,72 +144,81 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return Padding(
+        padding: const EdgeInsets.only(left: 4, right: 4, top: 2, bottom: 9),
         child: Column(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: <Widget>[
-        Form(
-          key: _formKey,
-          child: Column(
-            spacing: 12,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Телефон:"),
-              TextFormField(
-                decoration: InputDecoration.collapsed(hintText: 'Эл. почта'),
-                controller: myEmailController,
-                // The validator receives the text that the user has entered.
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter some text';
-                  }
-                  return null;
-                },
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            Form(
+              key: _formKey,
+              child: Column(
+                spacing: 12,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Эл. почта:"),
+                  TextFormField(
+                    keyboardType: TextInputType.text,
+                    decoration:
+                        InputDecoration.collapsed(hintText: 'Эл. почта'),
+                    controller: myEmailController,
+                    // The validator receives the text that the user has entered.
+                    validator: (value) {
+                      var re = RegExp(
+                          r'^([A-Za-z0-9.]{1,50})@([A-Za-z0-9.]{1,50})\.([A-Za-z0-9.]{1,5})$');
+
+                      if (value == null ||
+                          value.isEmpty ||
+                          !re.hasMatch(value)) {
+                        return 'Введите правильный эл. адрес';
+                      }
+                      return null;
+                    },
+                  ),
+                  Text("Паспорт:"),
+                  TextFormField(
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration.collapsed(hintText: 'Паспорт'),
+                    controller: mypassController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty || value.length < 10) {
+                        return 'Please enter some text';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
               ),
-              Text("Паспорт:"),
-              TextFormField(
-                decoration: InputDecoration.collapsed(hintText: 'Паспорт'),
-                controller: mypassController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter some text';
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Просмотр данных!')),
+                  );
+
+                  await getbookings();
+
+                  if (_offers.isEmpty) {
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Чеков нет или неверные данные!')),
+                    );
+                  } else {
+                    bookings(context);
                   }
-                  return null;
+                }
+              },
+              child: const Text('Чеки'),
+            ),
+            Spacer(),
+            TextButton(
+                onPressed: () {
+                  SystemChannels.platform.invokeMethod('SystemNavigator.pop');
                 },
-              ),
-            ],
-          ),
-        ),
-        ElevatedButton(
-          onPressed: () async {
-            if (_formKey.currentState!.validate()) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Просмотр данных!')),
-              );
-
-              await getbookings();
-
-              if (_offers.isEmpty) {
-                ScaffoldMessenger.of(context).hideCurrentSnackBar();
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                      content: Text('Чеков нет или неверные данные!')),
-                );
-              } else {
-                bookings(context);
-              }
-            }
-          },
-          child: const Text('Чеки'),
-        ),
-        Spacer(),
-        TextButton(
-            onPressed: () {
-              SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-            },
-            child: Text("Выход"))
-      ],
-    ));
+                child: Text("Выход"))
+          ],
+        ));
   }
 }
