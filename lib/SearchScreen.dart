@@ -9,6 +9,8 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'package:travel_booking_app/Point.dart';
 import 'package:travel_booking_app/Transport.dart';
+import 'package:travel_booking_app/TransportingMeans.dart';
+import 'package:travel_booking_app/Config.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key, required this.title});
@@ -22,6 +24,7 @@ class Searchscreen extends State<SearchScreen> {
   List<Transport> _offers = <Transport>[];
 
   static List<Point> points = [];
+  static List<TransportingMeans> means = [];
   static int pointA = -1;
   static int pointB = -1;
   static String pointAStr = "";
@@ -30,49 +33,60 @@ class Searchscreen extends State<SearchScreen> {
   DateTime? selectedDate;
   bool nextGoing = false;
 
-  final serverURI = 'foxelyss-ms7c95.lan:8080';
-
   Future<void> getPoints() async {
-    http.Response asdsd =
+    http.Response response =
         await http.get(Uri.http(serverURI, '/api/search/points'));
 
-    var pointsJson = jsonDecode(utf8.decode(asdsd.bodyBytes));
+    if (response.statusCode == 200) {
+    } else {
+      throw Exception('Error');
+    }
+
+    var pointsJson = jsonDecode(utf8.decode(response.bodyBytes));
     points = Point.fromJsonList(pointsJson);
+  }
+
+  Future<void> getMeans() async {
+    http.Response response =
+        await http.get(Uri.http(serverURI, '/api/search/means'));
+
+    if (response.statusCode == 200) {
+    } else {
+      throw Exception('Error');
+    }
+    var meansJson = jsonDecode(utf8.decode(response.bodyBytes));
+    means = TransportingMeans.fromJsonList(meansJson);
+    means.add(asd123);
   }
 
   Future<void> searchTransport() async {
     int wantedTime =
         nextGoing ? 0 : selectedDate!.millisecondsSinceEpoch ~/ 1000;
     print(wantedTime);
-    http.Response asdsd =
+    int _mean = mean == null ? -1 : mean!;
+    http.Response response =
         await http.get(Uri.http(serverURI, '/api/search/search', {
       'point_a': '$pointA',
       'point_b': '$pointB',
       'quantity': '12',
-      'wanted_time': '$wantedTime'
+      'wanted_time': '$wantedTime',
+      'mean': '$_mean'
     }));
-    print(pointA);
-    print(pointB);
-    print(jsonDecode(utf8.decode(asdsd.bodyBytes)));
-    var pointsJson = jsonDecode(utf8.decode(asdsd.bodyBytes));
+    if (response.statusCode == 200) {
+    } else {
+      throw Exception('Error');
+    }
+
+    var pointsJson = jsonDecode(utf8.decode(response.bodyBytes));
+
     setState(() {
       _offers = Transport.fromJsonList(pointsJson);
     });
   }
 
-  Future<void> getPoint() async {
-    http.Response asdsd =
-        await http.get(Uri.http(serverURI, '/api/search/points'));
-
-    var pointsJson = jsonDecode(utf8.decode(asdsd.bodyBytes));
-    points = Point.fromJsonList(pointsJson);
-  }
-
-  //api/booking
-
   Future<void> book(int transporting, String name, String surname,
       String middleName, String email, int passport, int phone) async {
-    http.Response asdsd =
+    http.Response response =
         await http.post(Uri.http(serverURI, '/api/booking/book', {
       "transporting": "$transporting",
       "name": name,
@@ -82,78 +96,10 @@ class Searchscreen extends State<SearchScreen> {
       "passport": "$passport",
       "phone": "$phone"
     }));
-    print(pointA);
-    print(pointB);
-    print(utf8.decode(asdsd.bodyBytes));
-    // var pointsJson = jsonDecode(utf8.decode(asdsd.bodyBytes));
-  }
-
-//api/business
-
-  Future<void> addTransport() async {
-    http.Response asdsd =
-        await http.get(Uri.http(serverURI, '/api/business/add_transport', {}));
-    print(pointA);
-    print(pointB);
-    print(jsonDecode(utf8.decode(asdsd.bodyBytes)));
-    var pointsJson = jsonDecode(utf8.decode(asdsd.bodyBytes));
-    setState(() {
-      _offers = Transport.fromJsonList(pointsJson);
-    });
-  }
-
-//api/about
-
-  Future<void> aboutTransport() async {
-    http.Response asdsd = await http.get(Uri.http(serverURI,
-        '/api/about/transport', {'point_a': '$pointA', 'point_b': '$pointB'}));
-    print(pointA);
-    print(pointB);
-    print(jsonDecode(utf8.decode(asdsd.bodyBytes)));
-    var pointsJson = jsonDecode(utf8.decode(asdsd.bodyBytes));
-    setState(() {
-      _offers = Transport.fromJsonList(pointsJson);
-    });
-  }
-
-  Future<void> aboutCompany() async {
-    http.Response asdsd = await http.get(Uri.http(serverURI,
-        '/api/about/company', {'point_a': '$pointA', 'point_b': '$pointB'}));
-    print(pointA);
-    print(pointB);
-    print(jsonDecode(utf8.decode(asdsd.bodyBytes)));
-    var pointsJson = jsonDecode(utf8.decode(asdsd.bodyBytes));
-    setState(() {
-      _offers = Transport.fromJsonList(pointsJson);
-    });
-  }
-
-  //api/admin
-
-  Future<void> addPoint() async {
-    http.Response asdsd = await http.get(Uri.http(serverURI,
-        '/api/admin/add_point', {'point_a': '$pointA', 'point_b': '$pointB'}));
-    print(pointA);
-    print(pointB);
-    print(jsonDecode(utf8.decode(asdsd.bodyBytes)));
-    var pointsJson = jsonDecode(utf8.decode(asdsd.bodyBytes));
-    setState(() {
-      _offers = Transport.fromJsonList(pointsJson);
-    });
-  }
-
-  Future<void> createCompany() async {
-    http.Response asdsd = await http.get(Uri.http(
-        serverURI,
-        '/api/admin/create_company',
-        {'point_a': '$pointA', 'point_b': '$pointB'}));
-    print(pointA);
-    print(pointB);
-    print(jsonDecode(utf8.decode(asdsd.bodyBytes)));
-    var pointsJson = jsonDecode(utf8.decode(asdsd.bodyBytes));
-    setState(() {
-      _offers = Transport.fromJsonList(pointsJson);
-    });
+    if (response.statusCode == 200) {
+    } else {
+      throw Exception('Error');
+    }
   }
 
   @override
@@ -281,10 +227,14 @@ class Searchscreen extends State<SearchScreen> {
     );
   }
 
+  int? mean;
   static Point none =
       Point(id: -1, town: "", name: "Выберете город", region: "region");
+  static TransportingMeans asd123 =
+      TransportingMeans(id: -1, name: "Все виды транспорта");
   void openSearchMenu(context) {
     getPoints();
+    getMeans();
     showModalBottomSheet(
         context: context,
         builder: (BuildContext bc) {
@@ -388,6 +338,22 @@ class Searchscreen extends State<SearchScreen> {
                             onChanged: (newValue) {
                               pointB = newValue?.id ?? -1;
                               pointBStr = newValue?.name ?? "Нет";
+                            }),
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: DropdownSearch<TransportingMeans>(
+                            items: (f, cs) => means,
+                            compareFn: (i, s) => i.isEqual(s),
+                            selectedItem: means.firstWhere(
+                                (el) => el.id == mean,
+                                orElse: () => asd123),
+                            popupProps: PopupProps.menu(fit: FlexFit.loose),
+                            onChanged: (newValue) {
+                              mean = newValue?.id ?? -1;
                             }),
                       )
                     ],
@@ -621,17 +587,26 @@ class Searchscreen extends State<SearchScreen> {
                           ElevatedButton(
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
-                                book(
-                                    asd,
-                                    mynameController.text,
-                                    mysurnameController.text,
-                                    mymidnameController.text,
-                                    myMailController.text,
-                                    int.parse(mypassController.unmasked),
-                                    int.parse(myphoneController.unmasked));
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Принято!')),
-                                );
+                                try {
+                                  book(
+                                      asd,
+                                      mynameController.text,
+                                      mysurnameController.text,
+                                      mymidnameController.text,
+                                      myMailController.text,
+                                      int.parse(mypassController.unmasked),
+                                      int.parse(myphoneController.unmasked));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Принято!')),
+                                  );
+                                } catch (asd) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            'Не забронировано из-за соединения с сетью!')),
+                                  );
+                                }
+
                                 Navigator.of(context).pop();
                                 Navigator.of(context1).pop();
                               }

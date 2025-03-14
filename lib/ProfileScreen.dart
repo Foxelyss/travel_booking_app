@@ -12,10 +12,8 @@ import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
-
 import 'dart:async';
-
-final serverURI = 'foxelyss-ms7c95.lan:8080';
+import 'package:travel_booking_app/Config.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -26,19 +24,23 @@ class ProfileScreen extends StatelessWidget {
   static List<dynamic> _offers = <dynamic>[];
 
   Future<void> getbookings() async {
-    http.Response asdsd =
+    http.Response response =
         await http.get(Uri.http(serverURI, '/api/booking/books', {
       "transporting": '1',
       "email": '${myEmailController.text}',
       "passport": '${mypassController.text}'
     }));
 
-    print(jsonDecode(utf8.decode(asdsd.bodyBytes)));
-    _offers = jsonDecode(utf8.decode(asdsd.bodyBytes)) as List;
+    if (response.statusCode == 200) {
+    } else {
+      throw Exception('Error');
+    }
+
+    _offers = jsonDecode(utf8.decode(response.bodyBytes)) as List;
   }
 
   Future<void> returnbook(transporting, id) async {
-    http.Response asdsd =
+    http.Response response =
         await http.post(Uri.http(serverURI, '/api/booking/return', {
       "transporting": '$transporting',
       "email": myEmailController.text,
@@ -47,8 +49,10 @@ class ProfileScreen extends StatelessWidget {
       'id': '$id'
     }));
 
-    print(utf8.decode(asdsd.bodyBytes));
-    // var pointsJson = jsonDecode(utf8.decode(asdsd.bodyBytes));
+    if (response.statusCode == 200) {
+    } else {
+      throw Exception('Error');
+    }
   }
 
   void bookings(context1) {
@@ -131,7 +135,16 @@ class ProfileScreen extends StatelessWidget {
                 children: [
                   TextButton(
                       onPressed: () {
-                        returnbook(transporting, id);
+                        try {
+                          (() async {
+                            returnbook(transporting, id);
+                          }).withRetries(3);
+                        } catch (q) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Проблема с сервисом!')),
+                          );
+                        }
                         Navigator.of(context).pop();
                       },
                       child: Text("Подтвердить!")),
@@ -196,7 +209,13 @@ class ProfileScreen extends StatelessWidget {
                     const SnackBar(content: Text('Просмотр данных!')),
                   );
 
-                  await getbookings();
+                  try {
+                    await getbookings.withRetries(3);
+                  } catch (q) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Проблема с сервисом!')),
+                    );
+                  }
 
                   if (_offers.isEmpty) {
                     ScaffoldMessenger.of(context).hideCurrentSnackBar();
