@@ -316,6 +316,7 @@ class Searchscreen extends State<SearchScreen> {
                           onChanged: (newValue) {
                             pointA = newValue?.id ?? -1;
                             pointAStr = newValue?.name ?? "Нет";
+                            setState(() {});
                           },
                         ),
                       )
@@ -338,6 +339,7 @@ class Searchscreen extends State<SearchScreen> {
                             onChanged: (newValue) {
                               pointB = newValue?.id ?? -1;
                               pointBStr = newValue?.name ?? "Нет";
+                              setState(() {});
                             }),
                       )
                     ],
@@ -379,9 +381,9 @@ class Searchscreen extends State<SearchScreen> {
         });
   }
 
-  void openAboutTransportMenu(context, Transport asd) {
+  void openAboutTransportMenu(context, Transport transport) {
     var time = "";
-    var diff = asd.end.difference(asd.start);
+    var diff = transport.end.difference(transport.start);
     var hours = diff.inHours - diff.inDays * 24;
 
     if (diff.inDays != 0) {
@@ -406,13 +408,13 @@ class Searchscreen extends State<SearchScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Text('Маршрут: ${asd.name}'),
+                            Text('Маршрут: ${transport.name}'),
                             Row(
                               children: [
-                                Text(asd.start_point),
+                                Text(transport.start_point),
                                 Expanded(child: Divider()),
                                 Text(
-                                  asd.end_point,
+                                  transport.end_point,
                                   textAlign: TextAlign.right,
                                 )
                               ],
@@ -420,25 +422,26 @@ class Searchscreen extends State<SearchScreen> {
                             Row(
                               children: [
                                 Text(DateFormat('dd.MM.yyyy\nH:m')
-                                    .format(asd.start)),
+                                    .format(transport.start)),
                                 Expanded(
                                   child: Divider(),
                                 ),
                                 Text(
-                                  DateFormat('dd.MM.yyyy\nH:m').format(asd.end),
+                                  DateFormat('dd.MM.yyyy\nH:m')
+                                      .format(transport.end),
                                   textAlign: TextAlign.right,
                                 )
                               ],
                             ),
                             Text('Приблизительное время поездки: $time'),
                             Text(
-                                'Выполняется компанией ${asd.company}. Осуществляется перевозка ${asd.mean}'),
+                                'Выполняется компанией ${transport.company}. Осуществляется перевозка ${transport.mean}'),
                             Chip(
                                 label: Text(
-                                    "${asd.freespacecount}/${asd.spacecount} мест свободны")),
+                                    "${transport.freespacecount}/${transport.spacecount} мест свободны")),
                             ElevatedButton(
                               onPressed: () {
-                                openBookingMenu(context, asd.id);
+                                openBookingMenu(context, transport.id);
                               },
                               child: const Text('Забронировать'),
                             ),
@@ -468,7 +471,7 @@ class Searchscreen extends State<SearchScreen> {
     return null;
   }
 
-  void openBookingMenu(context1, asd) {
+  void openBookingMenu(context1, idx) {
     showDialog(
         context: context1,
         builder: (BuildContext bc) {
@@ -589,7 +592,7 @@ class Searchscreen extends State<SearchScreen> {
                               if (_formKey.currentState!.validate()) {
                                 try {
                                   book(
-                                      asd,
+                                      idx,
                                       mynameController.text,
                                       mysurnameController.text,
                                       mymidnameController.text,

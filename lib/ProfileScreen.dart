@@ -71,7 +71,8 @@ class ProfileScreen extends StatelessWidget {
                       child: ListView.builder(
                         itemCount: _offers.length,
                         itemBuilder: (context, index) {
-                          return createTransporting(context, _offers[index]);
+                          return createTransporting(
+                              context, _offers[index], setModalState);
                         },
                       ),
                     ),
@@ -81,7 +82,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget createTransporting(context, obj) {
+  Widget createTransporting(context, obj, StateSetter modalSetter) {
     return Container(
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
@@ -108,8 +109,10 @@ class ProfileScreen extends StatelessWidget {
               TextButton(
                   onPressed: () {
                     returnBook(context, int.parse(obj["transporting"]),
-                        int.parse(obj["id"]));
+                        int.parse(obj["id"]), modalSetter);
+
                     getbookings();
+
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Обновление данных!')),
                     );
@@ -122,36 +125,41 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  void returnBook(context, transporting, id) {
+  void returnBook(context, transporting, id, StateSetter stateSetter) {
     showModalBottomSheet(
         context: context,
         builder: (BuildContext bc) {
-          return StatefulBuilder(
-              builder: (BuildContext context, StateSetter setModalState) {
-            return SizedBox(
-              height: MediaQuery.of(context).size.height * 0.3,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  TextButton(
-                      onPressed: () {
+          return SizedBox(
+            height: MediaQuery.of(context).size.height * 0.3,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                TextButton(
+                    onPressed: () {
+                      _offers.removeAt(
+                          _offers.indexWhere((a) => int.parse(a["id"]) == id));
+                      try {
+                        (() async {
+                          returnbook(transporting, id);
+                        }).withRetries(3);
+
                         try {
-                          (() async {
-                            returnbook(transporting, id);
-                          }).withRetries(3);
-                        } catch (q) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Проблема с сервисом!')),
-                          );
-                        }
+                          _offers.removeAt(_offers
+                              .indexWhere((a) => int.parse(a["id"]) == id));
+                        } catch (a) {}
+                      } catch (q) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Проблема с сервисом!')),
+                        );
+                      }
+                      stateSetter(() {
                         Navigator.of(context).pop();
-                      },
-                      child: Text("Подтвердить!")),
-                ],
-              ),
-            );
-          });
+                      });
+                    },
+                    child: Text("Подтвердить!")),
+              ],
+            ),
+          );
         });
   }
 
