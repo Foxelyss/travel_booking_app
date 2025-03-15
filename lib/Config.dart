@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:travel_booking_app/Point.dart';
 
-final serverURI = 'foxelyss-ms7c95.lan:8080';
+final serverURI = 'localhost:8080';
 
 extension Retry<T> on Future<T> Function() {
   Future<T> withRetries(int count) async {
@@ -23,12 +23,3 @@ extension Retry<T> on Future<T> Function() {
   }
 }
 
-void MakeTransaction(context, func) {
-  try {
-    func();
-  } catch (ca) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Обновление данных!')),
-    );
-  }
-}
