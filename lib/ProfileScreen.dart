@@ -51,7 +51,7 @@ class ProfileScreen extends StatelessWidget {
 
     if (response.statusCode == 200) {
     } else {
-      throw Exception('Error');
+      // throw Exception('Error');
     }
   }
 
@@ -90,15 +90,15 @@ class ProfileScreen extends StatelessWidget {
           color: Color.fromARGB(255, 219, 219, 219)),
       child: Column(
         children: [
-          Text("Маршрут: ${obj["name"]} Компании ${obj["company_name"]}"),
+          Text("Маршрут: ${obj["name"]} Компании ${obj["companyName"]}"),
           Divider(),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("Из:\n${obj["start_point"]}"),
+              Text("Из:\n${obj["startPoint"]}"),
               Text(
                   "На время:\n${DateFormat('dd.MM.yyyy\nH:m').format(DateTime.parse(obj["arrival"]))}"),
-              Text("В:\n${obj["end_point"]}")
+              Text("В:\n${obj["endPoint"]}")
             ],
           ),
           Divider(),
@@ -108,8 +108,8 @@ class ProfileScreen extends StatelessWidget {
               Text("№ чека ${obj["id"]}"),
               TextButton(
                   onPressed: () {
-                    returnBook(context, int.parse(obj["transporting"]),
-                        int.parse(obj["id"]), modalSetter);
+                    returnBook(
+                        context, obj["transporting"], obj["id"], modalSetter);
 
                     getbookings();
 
@@ -136,16 +136,16 @@ class ProfileScreen extends StatelessWidget {
               children: [
                 TextButton(
                     onPressed: () {
-                      _offers.removeAt(
-                          _offers.indexWhere((a) => int.parse(a["id"]) == id));
+                      _offers
+                          .removeAt(_offers.indexWhere((a) => a["id"] == id));
                       try {
                         (() async {
                           returnbook(transporting, id);
                         }).withRetries(3);
 
                         try {
-                          _offers.removeAt(_offers
-                              .indexWhere((a) => int.parse(a["id"]) == id));
+                          _offers.removeAt(
+                              _offers.indexWhere((a) => a["id"] == id));
                         } catch (a) {}
                       } catch (q) {
                         ScaffoldMessenger.of(context).showSnackBar(
