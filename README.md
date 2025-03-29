@@ -1,16 +1,13 @@
 # travel_booking_app
 
-A new Flutter project.
+Приложение для transportbooking
 
-## Getting Started
+## Запуск
 
-This project is a starting point for a Flutter application.
+Зависимости: flutter, dart
 
-A few resources to get you started if this is your first Flutter project:
+Для запуска: `flutter run`
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Полная инструкция в репозитории сервера
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+[репозитории сервера]: https://github.com/Foxelyss/transportbooking
