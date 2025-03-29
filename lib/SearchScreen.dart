@@ -177,9 +177,9 @@ class Searchscreen extends State<SearchScreen> {
                   ),
                 ),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  Text("${obj.freespacecount}/${obj.spacecount}"),
+                  Text("${obj.freeSpaceCount}/${obj.spaceCount}"),
                   TextButton(
-                    onPressed: obj.freespacecount == 0
+                    onPressed: obj.freeSpaceCount == 0
                         ? null
                         : () => {openAboutTransportMenu(context, obj)},
                     style: ButtonStyle(
@@ -411,10 +411,10 @@ class Searchscreen extends State<SearchScreen> {
                             Text('Маршрут: ${transport.name}'),
                             Row(
                               children: [
-                                Text(transport.start_point),
+                                Text(transport.startPoint),
                                 Expanded(child: Divider()),
                                 Text(
-                                  transport.end_point,
+                                  transport.endPoint,
                                   textAlign: TextAlign.right,
                                 )
                               ],
@@ -438,7 +438,7 @@ class Searchscreen extends State<SearchScreen> {
                                 'Выполняется компанией ${transport.company}. Осуществляется перевозка ${transport.mean}'),
                             Chip(
                                 label: Text(
-                                    "${transport.freespacecount}/${transport.spacecount} мест свободны")),
+                                    "${transport.freeSpaceCount}/${transport.spaceCount} мест свободны")),
                             ElevatedButton(
                               onPressed: () {
                                 openBookingMenu(context, transport.id);

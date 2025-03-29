@@ -1,28 +1,28 @@
 class Transport {
   final int id;
-  final String start_point;
-  final String end_point;
+  final String startPoint;
+  final String endPoint;
   final String name;
   final DateTime start;
   final DateTime end;
   final double price;
   final String mean;
   final String company;
-  final int spacecount;
-  final int freespacecount;
+  final int spaceCount;
+  final int freeSpaceCount;
 
   Transport({
     required this.id,
     required this.name,
     required this.start,
     required this.end,
-    required this.start_point,
-    required this.end_point,
+    required this.startPoint,
+    required this.endPoint,
     required this.price,
     required this.mean,
     required this.company,
-    required this.spacecount,
-    required this.freespacecount,
+    required this.spaceCount,
+    required this.freeSpaceCount,
   });
 
   factory Transport.fromJson(Map<String, dynamic> json) {
@@ -31,13 +31,13 @@ class Transport {
         name: json["name"],
         start: DateTime.parse(json["start"]),
         end: DateTime.parse(json["end"]),
-        start_point: json["start_point"].replaceAll("|", "\n"),
-        end_point: json["end_point"].replaceAll("|", "\n"),
+        startPoint: json["startPoint"].replaceAll("|", "\n"),
+        endPoint: json["endPoint"].replaceAll("|", "\n"),
         price: json["price"],
         mean: json["mean"],
         company: json["company"],
-        spacecount: json["places"],
-        freespacecount: json["free_place_quantity"]);
+        spaceCount: json["places"],
+        freeSpaceCount: json["freePlaceQuantity"]);
   }
 
   static List<Transport> fromJsonList(List list) {
