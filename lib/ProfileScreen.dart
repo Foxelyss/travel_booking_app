@@ -97,7 +97,7 @@ class ProfileScreen extends StatelessWidget {
             children: [
               Text("Из:\n${obj["startPoint"]}"),
               Text(
-                  "На время:\n${DateFormat('dd.MM.yyyy\nH:m').format(DateTime.parse(obj["arrival"]))}"),
+                  "На время:\n${DateFormat('dd.MM.yyyy\nH:m').format(DateTime.parse(obj["departure"]))}"),
               Text("В:\n${obj["endPoint"]}")
             ],
           ),
@@ -107,16 +107,21 @@ class ProfileScreen extends StatelessWidget {
             children: [
               Text("№ чека ${obj["id"]}"),
               TextButton(
-                  onPressed: () {
-                    returnBook(
-                        context, obj["transporting"], obj["id"], modalSetter);
+                  onPressed: DateTime.now()
+                              .difference(DateTime.parse(obj["departure"]))
+                              .inSeconds <=
+                          0
+                      ? () {
+                          returnBook(context, obj["transporting"], obj["id"],
+                              modalSetter);
 
-                    getbookings();
+                          getbookings();
 
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Обновление данных!')),
-                    );
-                  },
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Обновление данных!')),
+                          );
+                        }
+                      : null,
                   child: Text("Отказаться"))
             ],
           ),
