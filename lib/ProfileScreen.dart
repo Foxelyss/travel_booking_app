@@ -92,13 +92,15 @@ class ProfileScreen extends StatelessWidget {
         children: [
           Text("Маршрут: ${obj["name"]} Компании ${obj["companyName"]}"),
           Divider(),
+          Text(
+              "На время: ${DateFormat('dd.MM.yyyy HH:mm').format(DateTime.parse(obj["departure"]))}"),
+          Divider(),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("Из:\n${obj["startPoint"]}"),
-              Text(
-                  "На время:\n${DateFormat('dd.MM.yyyy\nH:m').format(DateTime.parse(obj["departure"]))}"),
-              Text("В:\n${obj["endPoint"]}")
+              Text("${obj["startPoint"]}"),
+              Text("➤"),
+              Text("${obj["endPoint"]}")
             ],
           ),
           Divider(),

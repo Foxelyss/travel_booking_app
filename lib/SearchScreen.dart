@@ -158,7 +158,8 @@ class Searchscreen extends State<SearchScreen> {
                       Text(time),
                       Row(
                         children: [
-                          Text(DateFormat('dd.MM.yyyy\nH:m').format(obj.start)),
+                          Text(DateFormat('dd.MM.yyyy\nHH:mm')
+                              .format(obj.start)),
                           Expanded(
                             child: Row(children: <Widget>[
                               Expanded(child: Divider()),
@@ -167,7 +168,7 @@ class Searchscreen extends State<SearchScreen> {
                             ]),
                           ),
                           Text(
-                            DateFormat('dd.MM.yyyy\nH:m').format(obj.end),
+                            DateFormat('dd.MM.yyyy\nHH:mm').format(obj.end),
                             textAlign: TextAlign.right,
                           )
                         ],
@@ -177,7 +178,7 @@ class Searchscreen extends State<SearchScreen> {
                   ),
                 ),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  Text("${obj.freeSpaceCount}/${obj.spaceCount}"),
+                  Text("${obj.freeSpaceCount}/${obj.spaceCount} мест"),
                   TextButton(
                     onPressed: obj.freeSpaceCount == 0
                         ? null
