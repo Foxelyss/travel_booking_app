@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'package:travel_booking_app/Point.dart';
+import 'package:travel_booking_app/SearchResultScreen.dart';
 import 'package:travel_booking_app/Transport.dart';
 import 'package:travel_booking_app/TransportingMeans.dart';
 import 'package:travel_booking_app/Config.dart';
@@ -114,12 +115,7 @@ class Searchscreen extends State<SearchScreen> {
             },
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: _offers.length,
-              itemBuilder: (context, index) {
-                return createTransporting(_offers[index]);
-              },
-            ),
+            child: ListViewScreen(),
           )
         ]));
   }
@@ -198,7 +194,7 @@ class Searchscreen extends State<SearchScreen> {
 
   Widget searchHint() {
     return Container(
-      padding: EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.only(bottom: 22),
       child: Column(
         children: [
           Row(
@@ -206,15 +202,16 @@ class Searchscreen extends State<SearchScreen> {
             children: [Text("От"), Text("До")],
           ),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(pointAStr),
-              Expanded(child: Divider()),
-              Text(
-                pointBStr,
-                textAlign: TextAlign.right,
-              )
+              Text(pointAStr,
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text(pointBStr,
+                  textAlign: TextAlign.right,
+                  style: const TextStyle(fontWeight: FontWeight.bold))
             ],
           ),
+          Divider(),
           Text(
             selectedDate == null || nextGoing
                 ? (pointA == -1

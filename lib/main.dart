@@ -16,10 +16,37 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 226, 223, 24)),
-        useMaterial3: true,
-      ),
+          colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color.fromARGB(255, 226, 223, 24)),
+          useMaterial3: true,
+          appBarTheme: AppBarTheme(centerTitle: false),
+          buttonTheme: ButtonThemeData(
+              height: 40,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  side: BorderSide(
+                      color: const Color.fromARGB(255, 212, 212, 212)))),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ButtonStyle(
+                minimumSize: WidgetStateProperty.all<Size>(Size(80, 40)),
+                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        side: BorderSide(
+                            color: const Color.fromARGB(255, 212, 212, 212))))),
+          ),
+          outlinedButtonTheme: OutlinedButtonThemeData(
+            style: ButtonStyle(
+                minimumSize: WidgetStateProperty.all<Size>(Size(80, 40)),
+                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        side: BorderSide(
+                            color: const Color.fromARGB(255, 212, 212, 212))))),
+          ),
+          dropdownMenuTheme: DropdownMenuThemeData(
+              inputDecorationTheme:
+                  InputDecorationTheme(border: UnderlineInputBorder()))),
       home: const MyHomePage(title: 'Перевозки'),
     );
   }
