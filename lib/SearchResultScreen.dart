@@ -17,8 +17,13 @@ class ListViewScreen extends StatefulWidget {
 }
 
 class _ListViewScreenState extends State<ListViewScreen> {
+  bool nextPage = true;
+
   late final _pagingController = PagingController<int, Transport>(
-    getNextPageKey: (state) => (state.keys?.last ?? 0) + 1,
+    getNextPageKey: (state) {
+      int next = (state.keys?.last ?? 0) + 1;
+      return nextPage ? next : null;
+    },
     fetchPage: (pageKey) => searchTransport(pageKey),
   );
 
@@ -44,27 +49,17 @@ class _ListViewScreenState extends State<ListViewScreen> {
   int wantedTime = 0;
   int mean = -1;
   int pointA = 1;
-  int pointB = 2;
+  int pointB = 3;
 
   Future<List<Transport>> searchTransport(int page) async {
-    http.Response response =
-        await http.get(Uri.http(serverURI, '/api/search/search', {
-      'point_a': '$pointA',
-      'point_b': '$pointB',
-      'quantity': '12',
-      'wanted_time': '$wantedTime',
-      'mean': '$mean',
-      'page': '$page'
-    }));
+    var list =
+        await Serverapi.searchTransport(pointA, pointB, wantedTime, mean, page);
 
-    if (response.statusCode == 200) {
-    } else {
-      throw Exception('Error');
+    if (list.isEmpty) {
+      nextPage = false;
     }
 
-    var pointsJson = jsonDecode(utf8.decode(response.bodyBytes));
-
-    return Transport.fromJsonList(pointsJson);
+    return list;
   }
 
   Widget createTransporting(Transport obj) {
@@ -73,10 +68,10 @@ class _ListViewScreenState extends State<ListViewScreen> {
     var hours = diff.inHours - diff.inDays * 24;
 
     if (diff.inDays != 0) {
-      time += "${diff.inDays} Дней ";
+      time += "${diff.inDays} ${Serverapi.russianDays(diff.inDays)}";
     }
     if (hours != 0) {
-      time += "$hours Часов";
+      time += "${hours} ${Serverapi.russianHours(hours)}";
     }
 
     return DefaultTextStyle(
@@ -94,23 +89,51 @@ class _ListViewScreenState extends State<ListViewScreen> {
                         Text(obj.mean),
                         Row(
                           children: [
-                            Text(DateFormat('dd.MM.yyyy\nHH:mm')
-                                .format(obj.start)),
+                            Text.rich(
+                              TextSpan(
+                                // with no TextStyle it will have default text style
+                                text: "",
+                                children: <TextSpan>[
+                                  TextSpan(
+                                      text: DateFormat('dd.MM.yyyy\n')
+                                          .format(obj.start),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                  TextSpan(
+                                    text: DateFormat('HH:mm').format(obj.start),
+                                  ),
+                                ],
+                              ),
+                            ),
                             Expanded(
                               child: Row(children: <Widget>[
                                 Expanded(child: Divider()),
-                                Text(time),
+                                Text("   $time   "),
                                 Expanded(child: Divider()),
                               ]),
                             ),
-                            Text(
-                              DateFormat('dd.MM.yyyy\nHH:mm').format(obj.end),
-                              textAlign: TextAlign.right,
-                            )
+                            Text.rich(
+                              TextSpan(
+                                // with no TextStyle it will have default text style
+                                text: "",
+                                children: <TextSpan>[
+                                  TextSpan(
+                                      text: DateFormat('dd.MM.yyyy\n')
+                                          .format(obj.end),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                  TextSpan(
+                                    text: DateFormat('HH:mm').format(obj.end),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
                         Text(obj.company),
-                        Divider(),
+                        Divider(
+                          height: 6,
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           spacing: 6,

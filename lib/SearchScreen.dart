@@ -106,18 +106,21 @@ class Searchscreen extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.all(3.0),
-        child: Column(children: [
-          InkWell(
-            child: searchHint(),
-            onTap: () {
-              openSearchMenu(context);
-            },
-          ),
-          Expanded(
-            child: ListViewScreen(),
-          )
-        ]));
+      padding: const EdgeInsets.all(3.0),
+      child: Container(
+          padding: EdgeInsets.all(6),
+          child: Column(children: [
+            InkWell(
+              child: searchHint(),
+              onTap: () {
+                openSearchMenu(context);
+              },
+            ),
+            Expanded(
+              child: ListViewScreen(),
+            )
+          ])),
+    );
   }
 
   Widget createTransporting(Transport obj) {
@@ -217,7 +220,7 @@ class Searchscreen extends State<SearchScreen> {
                 ? (pointA == -1
                     ? "Нажмите чтобы изменить критерии поиска"
                     : "За всё время")
-                : DateFormat('На dd.MM.yyyy H:m\nПо близости ко времени')
+                : DateFormat('Ближайшие к dd.MM.yyyy HH:mm')
                     .format(selectedDate!),
           )
         ],

@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Пассажирские перевозки',
       theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
               seedColor: const Color.fromARGB(255, 226, 223, 24)),
@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
           dropdownMenuTheme: DropdownMenuThemeData(
               inputDecorationTheme:
                   InputDecorationTheme(border: UnderlineInputBorder()))),
-      home: const MyHomePage(title: 'Перевозки'),
+      home: const MyHomePage(title: 'Пассажирские перевозки'),
     );
   }
 }
