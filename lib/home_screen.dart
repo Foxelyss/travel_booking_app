@@ -6,8 +6,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Expanded(
-          child: SingleChildScrollView(
+      child: SingleChildScrollView(
         child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             spacing: 12,
@@ -23,7 +22,7 @@ class HomeScreen extends StatelessWidget {
                 child: Image(image: AssetImage('assets/ad2.png')),
               ),
             ]),
-      )),
+      ),
     );
   }
 }

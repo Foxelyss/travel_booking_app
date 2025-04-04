@@ -206,7 +206,7 @@ class ProfileScreen extends StatelessWidget {
                     controller: mypassController,
                     validator: (value) {
                       if (value == null || value.isEmpty || value.length < 10) {
-                        return 'Please enter some text';
+                        return 'Введите корректные данные паспорта';
                       }
                       return null;
                     },
