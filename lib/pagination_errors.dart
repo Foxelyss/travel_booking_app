@@ -27,7 +27,7 @@ class CustomFirstPageError extends StatelessWidget {
                 height: 16,
               ),
               Text(
-                state.error.toString(),
+                state.error.toString().substring(11),
                 textAlign: TextAlign.center,
               ),
             ],

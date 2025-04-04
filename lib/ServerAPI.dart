@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:travel_booking_app/Transport.dart';
@@ -6,6 +7,8 @@ import 'package:travel_booking_app/Transport.dart';
 import 'Config.dart';
 
 class Serverapi {
+  static final noConnectionError = "Невозможно подключиться к серверу";
+
   static Future<void> book(int transporting, String name, String surname,
       String middleName, String email, int passport, int phone) async {
     http.Response response =
@@ -27,24 +30,33 @@ class Serverapi {
 
   static Future<List<Transport>> searchTransport(
       int pointA, int pointB, int wantedTime, int mean, int page) async {
-    http.Response response =
-        await http.get(Uri.http(serverURI, '/api/search/search', {
-      'point_a': '$pointA',
-      'point_b': '$pointB',
-      'quantity': '12',
-      'wanted_time': '$wantedTime',
-      'mean': '$mean',
-      'page': '$page'
-    }));
+    try {
+      http.Response response =
+          await http.get(Uri.http(serverURI, '/api/search/search', {
+        'point_a': '$pointA',
+        'point_b': '$pointB',
+        'quantity': '12',
+        'wanted_time': '$wantedTime',
+        'mean': '$mean',
+        'page': '$page'
+      }));
 
-    if (response.statusCode == 200) {
-    } else {
-      throw Exception('Error');
+      if (response.statusCode == 200) {
+        var pointsJson = jsonDecode(utf8.decode(response.bodyBytes));
+        return Transport.fromJsonList(pointsJson);
+      } else {
+        throw Exception("Ошибка сервера");
+      }
+    } on SocketException {
+      throw Exception(noConnectionError);
+    } on HttpException {
+      print("Странно...");
+      rethrow;
+    } on http.ClientException {
+      throw Exception(noConnectionError);
+    } on Exception {
+      rethrow;
     }
-
-    var pointsJson = jsonDecode(utf8.decode(response.bodyBytes));
-
-    return Transport.fromJsonList(pointsJson);
   }
 
   static String russianDays(int n) {
