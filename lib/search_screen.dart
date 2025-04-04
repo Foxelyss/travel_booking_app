@@ -1,17 +1,13 @@
-import 'dart:convert';
-
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 import 'package:intl/intl.dart';
-import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'package:travel_booking_app/point.dart';
 import 'package:travel_booking_app/search_result_screen.dart';
 import 'package:travel_booking_app/server_api.dart';
 import 'package:travel_booking_app/transport.dart';
 import 'package:travel_booking_app/transporting_means.dart';
-import 'package:travel_booking_app/config.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key, required this.title});
@@ -47,8 +43,9 @@ class Searchscreen extends State<SearchScreen> {
     return Padding(
       padding: const EdgeInsets.all(3.0),
       child: Container(
-          padding: EdgeInsets.all(6),
-          child: Column(children: [
+        padding: EdgeInsets.all(6),
+        child: Column(
+          children: [
             InkWell(
               child: searchHint(),
               onTap: () {
@@ -58,7 +55,9 @@ class Searchscreen extends State<SearchScreen> {
             Expanded(
               child: ListViewScreen(),
             )
-          ])),
+          ],
+        ),
+      ),
     );
   }
 
@@ -109,9 +108,10 @@ class Searchscreen extends State<SearchScreen> {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setModalState) {
             var date = selectedDate;
-            return SizedBox(
-              // height: MediaQuery.of(context).size.height * 0.3,
-
+            return ConstrainedBox(
+              constraints: BoxConstraints(
+                  maxHeight: 400,
+                  minHeight: MediaQuery.of(context).size.height * 0.3),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
