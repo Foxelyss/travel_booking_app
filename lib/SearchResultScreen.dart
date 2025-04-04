@@ -8,6 +8,8 @@ import 'package:intl/intl.dart';
 import 'package:travel_booking_app/Config.dart';
 import 'package:travel_booking_app/ServerAPI.dart';
 import 'package:travel_booking_app/Transport.dart';
+import 'package:travel_booking_app/pagination_errors.dart';
+import 'package:travel_booking_app/pagination_messages.dart';
 
 class ListViewScreen extends StatefulWidget {
   const ListViewScreen({super.key});
@@ -42,6 +44,12 @@ class _ListViewScreenState extends State<ListViewScreen> {
           fetchNextPage: fetchNextPage,
           builderDelegate: PagedChildBuilderDelegate(
             itemBuilder: (context, item, index) => createTransporting(item),
+            firstPageErrorIndicatorBuilder: (context) =>
+                CustomFirstPageError(pagingController: _pagingController),
+            newPageErrorIndicatorBuilder: (context) =>
+                CustomNewPageError(pagingController: _pagingController),
+            noItemsFoundIndicatorBuilder: (context) => NoItemsFoundIndicator(),
+            noMoreItemsIndicatorBuilder: (context) => Divider(),
           ),
         ),
       );
@@ -74,80 +82,78 @@ class _ListViewScreenState extends State<ListViewScreen> {
       time += "${hours} ${Serverapi.russianHours(hours)}";
     }
 
-    return DefaultTextStyle(
-        style: TextStyle(color: const Color.fromARGB(255, 255, 255, 255)),
-        child: Card(
-            child: InkWell(
-                onTap: obj.freeSpaceCount == 0
-                    ? null
-                    : () => {openAboutTransportMenu(context, obj)},
-                child: Container(
-                    padding: EdgeInsets.all(9),
-                    child: Column(
-                      spacing: 10,
+    return Card(
+        child: InkWell(
+            onTap: obj.freeSpaceCount == 0
+                ? null
+                : () => {openAboutTransportMenu(context, obj)},
+            child: Container(
+                padding: EdgeInsets.all(9),
+                child: Column(
+                  spacing: 10,
+                  children: [
+                    Text(obj.mean),
+                    Row(
                       children: [
-                        Text(obj.mean),
-                        Row(
-                          children: [
-                            Text.rich(
+                        Text.rich(
+                          TextSpan(
+                            // with no TextStyle it will have default text style
+                            text: "",
+                            children: <TextSpan>[
                               TextSpan(
-                                // with no TextStyle it will have default text style
-                                text: "",
-                                children: <TextSpan>[
-                                  TextSpan(
-                                      text: DateFormat('dd.MM.yyyy\n')
-                                          .format(obj.start),
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
-                                  TextSpan(
-                                    text: DateFormat('HH:mm').format(obj.start),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              child: Row(children: <Widget>[
-                                Expanded(child: Divider()),
-                                Text("   $time   "),
-                                Expanded(child: Divider()),
-                              ]),
-                            ),
-                            Text.rich(
+                                  text: DateFormat('dd.MM.yyyy\n')
+                                      .format(obj.start),
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
                               TextSpan(
-                                // with no TextStyle it will have default text style
-                                text: "",
-                                children: <TextSpan>[
-                                  TextSpan(
-                                      text: DateFormat('dd.MM.yyyy\n')
-                                          .format(obj.end),
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
-                                  TextSpan(
-                                    text: DateFormat('HH:mm').format(obj.end),
-                                  ),
-                                ],
+                                text: DateFormat('HH:mm').format(obj.start),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                        Text(obj.company),
-                        Divider(
-                          height: 6,
+                        Expanded(
+                          child: Row(children: <Widget>[
+                            Expanded(child: Divider()),
+                            Text("   $time   "),
+                            Expanded(child: Divider()),
+                          ]),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          spacing: 6,
-                          children: [
-                            Text("${obj.freeSpaceCount}/${obj.spaceCount}",
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w300)),
-                            Text("${obj.price}₽",
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 20)),
-                          ],
-                        )
+                        Text.rich(
+                          TextSpan(
+                            // with no TextStyle it will have default text style
+                            text: "",
+                            children: <TextSpan>[
+                              TextSpan(
+                                  text: DateFormat('dd.MM.yyyy\n')
+                                      .format(obj.end),
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
+                              TextSpan(
+                                text: DateFormat('HH:mm').format(obj.end),
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
-                    )))));
+                    ),
+                    Text(obj.company),
+                    Divider(
+                      height: 6,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      spacing: 6,
+                      children: [
+                        Text("${obj.freeSpaceCount}/${obj.spaceCount}",
+                            style:
+                                const TextStyle(fontWeight: FontWeight.w300)),
+                        Text("${obj.price}₽",
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20)),
+                      ],
+                    )
+                  ],
+                ))));
   }
 
   void openAboutTransportMenu(context, Transport transport) {
