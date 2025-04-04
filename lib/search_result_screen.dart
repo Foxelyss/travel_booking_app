@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:intl/intl.dart';
-import 'package:travel_booking_app/Config.dart';
-import 'package:travel_booking_app/ServerAPI.dart';
-import 'package:travel_booking_app/Transport.dart';
+import 'package:travel_booking_app/config.dart';
+import 'package:travel_booking_app/server_api.dart';
+import 'package:travel_booking_app/transport.dart';
 import 'package:travel_booking_app/pagination_errors.dart';
 import 'package:travel_booking_app/pagination_messages.dart';
 

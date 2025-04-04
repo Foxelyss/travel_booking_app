@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:travel_booking_app/HomeScreen.dart';
-import 'package:travel_booking_app/ProfileScreen.dart';
+import 'package:travel_booking_app/home_screen.dart';
+import 'package:travel_booking_app/profile_screen.dart';
 
-import 'SearchScreen.dart';
+import 'search_screen.dart';
 
 void main() {
   runApp(const MyApp());

@@ -7,11 +7,11 @@ import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
-import 'package:travel_booking_app/Point.dart';
-import 'package:travel_booking_app/SearchResultScreen.dart';
-import 'package:travel_booking_app/Transport.dart';
-import 'package:travel_booking_app/TransportingMeans.dart';
-import 'package:travel_booking_app/Config.dart';
+import 'package:travel_booking_app/point.dart';
+import 'package:travel_booking_app/search_result_screen.dart';
+import 'package:travel_booking_app/transport.dart';
+import 'package:travel_booking_app/transporting_means.dart';
+import 'package:travel_booking_app/config.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key, required this.title});

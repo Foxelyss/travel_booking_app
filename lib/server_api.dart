@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import 'package:travel_booking_app/Transport.dart';
+import 'package:travel_booking_app/transport.dart';
 
-import 'Config.dart';
+import 'config.dart';
 
 class Serverapi {
   static final noConnectionError = "Невозможно подключиться к серверу";

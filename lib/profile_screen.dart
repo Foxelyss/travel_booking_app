@@ -13,7 +13,7 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:async';
-import 'package:travel_booking_app/Config.dart';
+import 'package:travel_booking_app/config.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
