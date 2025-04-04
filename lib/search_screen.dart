@@ -26,9 +26,8 @@ class Searchscreen extends State<SearchScreen> {
   static int pointB = -1;
   static String pointAStr = "";
   static String pointBStr = "";
-  int counter = 0;
+
   DateTime? selectedDate;
-  bool nextGoing = false;
 
   Future<void> getPoints() async {
     points = await ServerAPI.getPoints();
@@ -53,8 +52,12 @@ class Searchscreen extends State<SearchScreen> {
               },
             ),
             Expanded(
-              child: ListViewScreen(),
-            )
+                child: ListViewScreen(
+              pointA: pointA,
+              pointB: pointB,
+              mean: mean,
+              wantedTime: 0,
+            ))
           ],
         ),
       ),
@@ -82,7 +85,7 @@ class Searchscreen extends State<SearchScreen> {
           ),
           Divider(),
           Text(
-            selectedDate == null || nextGoing
+            selectedDate == null
                 ? (pointA == -1
                     ? "Нажмите чтобы изменить критерии поиска"
                     : "За всё время")
@@ -94,10 +97,17 @@ class Searchscreen extends State<SearchScreen> {
     );
   }
 
-  int? mean;
+  static final dropStyle = DropDownDecoratorProps(
+    decoration: InputDecoration(
+        contentPadding: EdgeInsets.fromLTRB(12, 12, 0, 0),
+        border: OutlineInputBorder(),
+        constraints: BoxConstraints(maxHeight: 40)),
+  );
+
+  int mean = -1;
   static Point none =
       Point(id: -1, town: "", name: "Выберете город", region: "region");
-  static TransportingMeans asd123 =
+  static TransportingMeans allTransportingMeans =
       TransportingMeans(id: -1, name: "Все виды транспорта");
   void openSearchMenu(context) {
     getPoints();
@@ -110,133 +120,144 @@ class Searchscreen extends State<SearchScreen> {
             var date = selectedDate;
             return ConstrainedBox(
               constraints: BoxConstraints(
-                  maxHeight: 400,
-                  minHeight: MediaQuery.of(context).size.height * 0.3),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Column(children: [
-                        ElevatedButton.icon(
-                          icon: const Icon(Icons.calendar_today),
-                          onPressed: !nextGoing
-                              ? () async {
-                                  DatePicker.showDateTimePicker(context,
-                                      showTitleActions: true,
-                                      minTime: DateTime.now(),
-                                      maxTime: DateTime(2030, 6, 7),
-                                      onChanged: (date) {
-                                    print('change $date');
-                                  }, onConfirm: (date) {
-                                    var pickedDate = date;
-                                    pickedDate = date;
-                                    setModalState(() {
-                                      selectedDate = pickedDate;
-                                    });
-                                    setState(() {
-                                      selectedDate = pickedDate;
-                                    });
-                                    print('confirm $date');
-                                  },
-                                      currentTime: DateTime.now(),
-                                      locale: LocaleType.ru);
-                                }
-                              : null,
-                          label: Text(
-                            date == null
-                                ? "Выберете время"
-                                : DateFormat('dd.MM.yyyy H:m').format(date),
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            Text("Грядущие"),
-                            Checkbox(
-                              value: nextGoing,
-                              onChanged: (bool? a) {
+                  maxHeight: 500,
+                  minHeight: MediaQuery.of(context).size.height * 0.33),
+              child: Padding(
+                padding: EdgeInsets.all(12),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            icon: const Icon(Icons.calendar_today),
+                            onPressed: () async {
+                              DatePicker.showDateTimePicker(context,
+                                  showTitleActions: true,
+                                  minTime: DateTime.now(),
+                                  maxTime: DateTime(2030, 6, 7),
+                                  onChanged: (date) {}, onConfirm: (date) {
+                                var pickedDate = date;
+                                pickedDate = date;
                                 setModalState(() {
-                                  nextGoing = a!;
+                                  selectedDate = pickedDate;
                                 });
-                                setState(() {});
+                                setState(() {
+                                  selectedDate = pickedDate;
+                                });
                               },
-                            )
-                          ],
+                                  currentTime: DateTime.now(),
+                                  locale: LocaleType.ru);
+                            },
+                            label: Text(
+                              "Выберете время",
+                            ),
+                          ),
                         )
-                      ]),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Text("От: "),
-                      Expanded(
-                        child: DropdownSearch<Point>(
-                          items: (f, cs) => points,
-                          compareFn: (i, s) => i.isEqual(s),
-                          selectedItem: points.firstWhere(
-                              (el) => el.id == pointA,
-                              orElse: () => none),
-                          popupProps: PopupProps.menu(
-                              showSearchBox: true, fit: FlexFit.loose),
-                          onChanged: (newValue) {
-                            pointA = newValue?.id ?? -1;
-                            pointAStr = newValue?.name ?? "Нет";
-                            setState(() {});
-                          },
-                        ),
-                      )
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Text("В: "),
-                      Expanded(
-                        child: DropdownSearch<Point>(
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(date == null
+                            ? "Предстоящие"
+                            : DateFormat('dd MMMM yyyy HH:mm', "RU")
+                                .format(date)),
+                        TextButton.icon(
+                            icon: Icon(Icons.clear_rounded),
+                            onPressed: () {
+                              setModalState(() {
+                                date = null;
+                                setState(() {
+                                  selectedDate = null;
+                                });
+                              });
+                            },
+                            label: Text("Очистить")),
+                      ],
+                    ),
+                    Row(
+                      spacing: 30,
+                      children: [
+                        Text("От: "),
+                        Expanded(
+                          child: DropdownSearch<Point>(
+                            decoratorProps: dropStyle,
                             items: (f, cs) => points,
                             compareFn: (i, s) => i.isEqual(s),
                             selectedItem: points.firstWhere(
-                                (el) => el.id == pointB,
+                                (el) => el.id == pointA,
                                 orElse: () => none),
                             popupProps: PopupProps.menu(
                                 showSearchBox: true, fit: FlexFit.loose),
                             onChanged: (newValue) {
-                              pointB = newValue?.id ?? -1;
-                              pointBStr = newValue?.name ?? "Нет";
+                              pointA = newValue?.id ?? -1;
+                              pointAStr = newValue?.name ?? "Нет";
                               setState(() {});
-                            }),
-                      )
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: DropdownSearch<TransportingMeans>(
-                            items: (f, cs) => means,
-                            compareFn: (i, s) => i.isEqual(s),
-                            selectedItem: means.firstWhere(
-                                (el) => el.id == mean,
-                                orElse: () => asd123),
-                            popupProps: PopupProps.menu(fit: FlexFit.loose),
-                            onChanged: (newValue) {
-                              mean = newValue?.id ?? -1;
-                            }),
-                      )
-                    ],
-                  ),
-                  TextButton(
-                      onPressed: pointA == -1 ||
-                              pointB == -1 ||
-                              (nextGoing == false && selectedDate == null)
-                          ? null
-                          : () {
-                              setState(() {
-                                counter++;
-                              });
-                              Navigator.of(context).pop();
+                              setModalState(() {});
                             },
-                      child: Text("Искать!")),
-                ],
+                          ),
+                        )
+                      ],
+                    ),
+                    Row(
+                      spacing: 30,
+                      children: [
+                        Text("В: "),
+                        Expanded(
+                          child: DropdownSearch<Point>(
+                              items: (f, cs) => points,
+                              decoratorProps: dropStyle,
+                              compareFn: (i, s) => i.isEqual(s),
+                              selectedItem: points.firstWhere(
+                                  (el) => el.id == pointB,
+                                  orElse: () => none),
+                              popupProps: PopupProps.menu(
+                                  showSearchBox: true, fit: FlexFit.loose),
+                              onChanged: (newValue) {
+                                pointB = newValue?.id ?? -1;
+                                pointBStr = newValue?.name ?? "Нет";
+                                setState(() {});
+                                setModalState(() {});
+                              }),
+                        )
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: DropdownSearch<TransportingMeans>(
+                              items: (f, cs) => means,
+                              decoratorProps: dropStyle,
+                              compareFn: (i, s) => i.isEqual(s),
+                              selectedItem: means.firstWhere(
+                                  (el) => el.id == mean,
+                                  orElse: () => allTransportingMeans),
+                              popupProps: PopupProps.menu(fit: FlexFit.loose),
+                              onChanged: (newValue) {
+                                setState(() {
+                                  mean = newValue?.id ?? -1;
+                                });
+                              }),
+                        )
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextButton(
+                              onPressed: pointA == -1 || pointB == -1
+                                  ? null
+                                  : () {
+                                      Navigator.of(context).pop();
+                                    },
+                              child: Text("Искать!")),
+                        )
+                      ],
+                    )
+                  ],
+                ),
               ),
             );
           });

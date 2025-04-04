@@ -8,7 +8,18 @@ import 'package:travel_booking_app/pagination_errors.dart';
 import 'package:travel_booking_app/pagination_messages.dart';
 
 class ListViewScreen extends StatefulWidget {
-  const ListViewScreen({super.key});
+  final int pointA;
+  final int pointB;
+  final int wantedTime;
+  final int mean;
+
+  const ListViewScreen({
+    super.key,
+    required this.pointA,
+    required this.pointB,
+    required this.wantedTime,
+    required this.mean,
+  });
 
   @override
   State<ListViewScreen> createState() => _ListViewScreenState();
@@ -32,32 +43,38 @@ class _ListViewScreenState extends State<ListViewScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => PagingListener(
-        controller: _pagingController,
-        builder: (context, state, fetchNextPage) =>
-            PagedListView<int, Transport>(
-          state: state,
-          fetchNextPage: fetchNextPage,
-          builderDelegate: PagedChildBuilderDelegate(
-            itemBuilder: (context, item, index) => createTransporting(item),
-            firstPageErrorIndicatorBuilder: (context) =>
-                CustomFirstPageError(pagingController: _pagingController),
-            newPageErrorIndicatorBuilder: (context) =>
-                CustomNewPageError(pagingController: _pagingController),
-            noItemsFoundIndicatorBuilder: (context) => NoItemsFoundIndicator(),
-            noMoreItemsIndicatorBuilder: (context) => Divider(),
-          ),
-        ),
-      );
+  void didUpdateWidget(covariant ListViewScreen oldWidget) {
+    nextPage = true;
+    _pagingController.refresh();
 
-  int wantedTime = 0;
-  int mean = -1;
-  int pointA = 1;
-  int pointB = 3;
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print(123);
+
+    return PagingListener(
+      controller: _pagingController,
+      builder: (context, state, fetchNextPage) => PagedListView<int, Transport>(
+        state: state,
+        fetchNextPage: fetchNextPage,
+        builderDelegate: PagedChildBuilderDelegate(
+          itemBuilder: (context, item, index) => createTransporting(item),
+          firstPageErrorIndicatorBuilder: (context) =>
+              CustomFirstPageError(pagingController: _pagingController),
+          newPageErrorIndicatorBuilder: (context) =>
+              CustomNewPageError(pagingController: _pagingController),
+          noItemsFoundIndicatorBuilder: (context) => NoItemsFoundIndicator(),
+          noMoreItemsIndicatorBuilder: (context) => Divider(),
+        ),
+      ),
+    );
+  }
 
   Future<List<Transport>> searchTransport(int page) async {
-    var list =
-        await ServerAPI.searchTransport(pointA, pointB, wantedTime, mean, page);
+    var list = await ServerAPI.searchTransport(
+        widget.pointA, widget.pointB, widget.wantedTime, widget.mean, page);
 
     if (list.isEmpty) {
       nextPage = false;

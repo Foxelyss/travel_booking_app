@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:travel_booking_app/home_screen.dart';
 import 'package:travel_booking_app/profile_screen.dart';
-
-import 'search_screen.dart';
+import 'package:travel_booking_app/search_screen.dart';
 
 void main() {
   runApp(const MyApp());
+  initializeDateFormatting("Ru");
 }
 
 class MyApp extends StatelessWidget {
@@ -21,14 +22,14 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
           appBarTheme: AppBarTheme(centerTitle: false),
           buttonTheme: ButtonThemeData(
-              height: 40,
+              height: 50,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
                   side: BorderSide(
                       color: const Color.fromARGB(255, 212, 212, 212)))),
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ButtonStyle(
-                minimumSize: WidgetStateProperty.all<Size>(Size(80, 40)),
+                minimumSize: WidgetStateProperty.all<Size>(Size(80, 50)),
                 shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
@@ -37,7 +38,16 @@ class MyApp extends StatelessWidget {
           ),
           outlinedButtonTheme: OutlinedButtonThemeData(
             style: ButtonStyle(
-                minimumSize: WidgetStateProperty.all<Size>(Size(80, 40)),
+                minimumSize: WidgetStateProperty.all<Size>(Size(80, 50)),
+                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        side: BorderSide(
+                            color: const Color.fromARGB(255, 212, 212, 212))))),
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: ButtonStyle(
+                minimumSize: WidgetStateProperty.all<Size>(Size(80, 50)),
                 shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),

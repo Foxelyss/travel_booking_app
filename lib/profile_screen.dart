@@ -55,21 +55,23 @@ class ProfileScreen extends StatelessWidget {
         return StatefulBuilder(
             builder: (BuildContext context, StateSetter setModalState) {
           return Scaffold(
-              appBar: AppBar(title: const Text('Чеки')),
-              body: Padding(
-                  padding: const EdgeInsets.all(3.0),
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(maxWidth: 450),
-                      child: ListView.builder(
-                        itemCount: _offers.length,
-                        itemBuilder: (context, index) {
-                          return createTransporting(
-                              context, _offers[index], setModalState);
-                        },
-                      ),
-                    ),
-                  )));
+            appBar: AppBar(title: const Text('Чеки')),
+            body: Padding(
+              padding: const EdgeInsets.all(3.0),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 450),
+                  child: ListView.builder(
+                    itemCount: _offers.length,
+                    itemBuilder: (context, index) {
+                      return createTransporting(
+                          context, _offers[index], setModalState);
+                    },
+                  ),
+                ),
+              ),
+            ),
+          );
         });
       }),
     );
@@ -166,9 +168,11 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.only(left: 4, right: 4, top: 2, bottom: 9),
+        padding:
+            const EdgeInsets.only(left: 14, right: 14, top: 10, bottom: 16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
+          spacing: 32,
           children: <Widget>[
             Form(
               key: _formKey,
@@ -210,41 +214,52 @@ class ProfileScreen extends StatelessWidget {
                 ],
               ),
             ),
-            ElevatedButton(
-              onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Просмотр данных!')),
-                  );
+            Row(
+              children: [
+                Expanded(
+                    child: ElevatedButton(
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Просмотр данных!')),
+                      );
 
-                  try {
-                    await getbookings.withRetries(3);
-                  } catch (q) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Проблема с сервисом!')),
-                    );
-                  }
+                      try {
+                        await getbookings.withRetries(3);
+                      } catch (q) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Проблема с сервисом!')),
+                        );
+                      }
 
-                  if (_offers.isEmpty) {
-                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      if (_offers.isEmpty) {
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Чеков нет или неверные данные!')),
-                    );
-                  } else {
-                    bookings(context);
-                  }
-                }
-              },
-              child: const Text('Чеки'),
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Чеков нет или неверные данные!')),
+                        );
+                      } else {
+                        bookings(context);
+                      }
+                    }
+                  },
+                  child: const Text('Чеки'),
+                ))
+              ],
             ),
             Spacer(),
-            TextButton(
-                onPressed: () {
-                  SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-                },
-                child: Text("Выход"))
+            Row(
+              children: [
+                Expanded(
+                    child: TextButton(
+                        onPressed: () {
+                          SystemChannels.platform
+                              .invokeMethod('SystemNavigator.pop');
+                        },
+                        child: Text("Выход из приложения")))
+              ],
+            )
           ],
         ));
   }
