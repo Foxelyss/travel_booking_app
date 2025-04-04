@@ -53,7 +53,6 @@ class ServerAPI {
     } on SocketException {
       throw Exception(noConnectionError);
     } on HttpException {
-      print("Странно...");
       rethrow;
     } on http.ClientException {
       throw Exception(noConnectionError);

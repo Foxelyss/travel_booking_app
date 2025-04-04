@@ -52,8 +52,6 @@ class _ListViewScreenState extends State<ListViewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(123);
-
     return PagingListener(
       controller: _pagingController,
       builder: (context, state, fetchNextPage) => PagedListView<int, Transport>(
@@ -92,7 +90,7 @@ class _ListViewScreenState extends State<ListViewScreen> {
       time += "${diff.inDays} ${ServerAPI.russianDays(diff.inDays)}";
     }
     if (hours != 0) {
-      time += "${hours} ${ServerAPI.russianHours(hours)}";
+      time += "$hours ${ServerAPI.russianHours(hours)}";
     }
 
     return Card(

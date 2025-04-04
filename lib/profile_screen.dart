@@ -11,7 +11,7 @@ import 'package:travel_booking_app/config.dart';
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
-  static var _formKey = GlobalKey<FormState>();
+  static final _formKey = GlobalKey<FormState>();
   static var myEmailController = TextEditingController();
   static var mypassController = MaskedTextController(mask: '0000 000000');
   static List<dynamic> _offers = <dynamic>[];
@@ -20,8 +20,8 @@ class ProfileScreen extends StatelessWidget {
     http.Response response =
         await http.get(Uri.http(serverURI, '/api/booking/books', {
       "transporting": '1',
-      "email": '${myEmailController.text}',
-      "passport": '${mypassController.text}'
+      "email": myEmailController.text,
+      "passport": mypassController.text
     }));
 
     if (response.statusCode == 200) {
@@ -148,7 +148,9 @@ class ProfileScreen extends StatelessWidget {
                         try {
                           _offers.removeAt(
                               _offers.indexWhere((a) => a["id"] == id));
-                        } catch (a) {}
+                        } catch (a) {
+                          ();
+                        }
                       } catch (q) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Проблема с сервисом!')),
@@ -227,20 +229,28 @@ class ProfileScreen extends StatelessWidget {
                       try {
                         await getbookings.withRetries(3);
                       } catch (q) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Проблема с сервисом!')),
-                        );
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Проблема с сервисом!')),
+                          );
+                        }
                       }
 
                       if (_offers.isEmpty) {
-                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Чеков нет или неверные данные!')),
-                        );
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content:
+                                    Text('Чеков нет или неверные данные!')),
+                          );
+                        }
                       } else {
-                        bookings(context);
+                        if (context.mounted) {
+                          bookings(context);
+                        }
                       }
                     }
                   },
