@@ -143,9 +143,6 @@ class Searchscreen extends State<SearchScreen> {
                                 setModalState(() {
                                   selectedDate = pickedDate;
                                 });
-                                setState(() {
-                                  selectedDate = pickedDate;
-                                });
                               },
                                   currentTime: DateTime.now(),
                                   locale: LocaleType.ru);
@@ -169,9 +166,8 @@ class Searchscreen extends State<SearchScreen> {
                             onPressed: () {
                               setModalState(() {
                                 date = null;
-                                setState(() {
-                                  selectedDate = null;
-                                });
+
+                                selectedDate = null;
                               });
                             },
                             label: Text("Очистить")),
@@ -194,7 +190,7 @@ class Searchscreen extends State<SearchScreen> {
                             onChanged: (newValue) {
                               pointA = newValue?.id ?? -1;
                               pointAStr = newValue?.name ?? "Нет";
-                              setState(() {});
+
                               setModalState(() {});
                             },
                           ),
@@ -218,7 +214,7 @@ class Searchscreen extends State<SearchScreen> {
                               onChanged: (newValue) {
                                 pointB = newValue?.id ?? -1;
                                 pointBStr = newValue?.name ?? "Нет";
-                                setState(() {});
+
                                 setModalState(() {});
                               }),
                         )
@@ -236,7 +232,7 @@ class Searchscreen extends State<SearchScreen> {
                                   orElse: () => allTransportingMeans),
                               popupProps: PopupProps.menu(fit: FlexFit.loose),
                               onChanged: (newValue) {
-                                setState(() {
+                                setModalState(() {
                                   mean = newValue?.id ?? -1;
                                 });
                               }),
@@ -251,6 +247,7 @@ class Searchscreen extends State<SearchScreen> {
                                   ? null
                                   : () {
                                       Navigator.of(context).pop();
+                                      setState(() {});
                                     },
                               child: Text("Искать!")),
                         )
