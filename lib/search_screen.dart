@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:dropdown_search/dropdown_search.dart';
-import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 import 'package:intl/intl.dart';
@@ -60,49 +59,6 @@ class Searchscreen extends State<SearchScreen> {
     means.add(asd123);
   }
 
-  Future<void> searchTransport() async {
-    int wantedTime =
-        nextGoing ? 0 : selectedDate!.millisecondsSinceEpoch ~/ 1000;
-    print(wantedTime);
-    int _mean = mean == null ? -1 : mean!;
-    http.Response response =
-        await http.get(Uri.http(serverURI, '/api/search/search', {
-      'point_a': '$pointA',
-      'point_b': '$pointB',
-      'quantity': '12',
-      'wanted_time': '$wantedTime',
-      'mean': '$_mean'
-    }));
-    if (response.statusCode == 200) {
-    } else {
-      throw Exception('Error');
-    }
-
-    var pointsJson = jsonDecode(utf8.decode(response.bodyBytes));
-
-    setState(() {
-      offers = Transport.fromJsonList(pointsJson);
-    });
-  }
-
-  Future<void> book(int transporting, String name, String surname,
-      String middleName, String email, int passport, int phone) async {
-    http.Response response =
-        await http.post(Uri.http(serverURI, '/api/booking/book', {
-      "transporting": "$transporting",
-      "name": name,
-      "surname": surname,
-      "middle_name": middleName,
-      "email": email,
-      "passport": "$passport",
-      "phone": "$phone"
-    }));
-    if (response.statusCode == 200) {
-    } else {
-      throw Exception('Error');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -120,78 +76,6 @@ class Searchscreen extends State<SearchScreen> {
               child: ListViewScreen(),
             )
           ])),
-    );
-  }
-
-  Widget createTransporting(Transport obj) {
-    var time = "";
-    var diff = obj.end.difference(obj.start);
-    var hours = diff.inHours - diff.inDays * 24;
-
-    if (diff.inDays != 0) {
-      time += "${diff.inDays} Дней ";
-    }
-    if (hours != 0) {
-      time += "$hours Часов";
-    }
-
-    return DefaultTextStyle(
-      style: TextStyle(color: const Color.fromARGB(255, 255, 255, 255)),
-      child: Container(
-          child: Container(
-
-              // color: Colors.white,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(width: 2, color: Colors.white),
-                  color: Color.fromARGB(255, 181, 229, 236)),
-              child: Column(children: [
-                Container(
-                  // color: Colors.amber,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(width: 2, color: Colors.white),
-                      color: Color.fromARGB(255, 54, 180, 199)),
-                  child: Column(
-                    children: [
-                      Text(time),
-                      Row(
-                        children: [
-                          Text(DateFormat('dd.MM.yyyy\nHH:mm')
-                              .format(obj.start)),
-                          Expanded(
-                            child: Row(children: <Widget>[
-                              Expanded(child: Divider()),
-                              Text(obj.mean),
-                              Expanded(child: Divider()),
-                            ]),
-                          ),
-                          Text(
-                            DateFormat('dd.MM.yyyy\nHH:mm').format(obj.end),
-                            textAlign: TextAlign.right,
-                          )
-                        ],
-                      ),
-                      Text(obj.company),
-                    ],
-                  ),
-                ),
-                Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  Text("${obj.freeSpaceCount}/${obj.spaceCount} мест"),
-                  TextButton(
-                    onPressed: obj.freeSpaceCount == 0
-                        ? null
-                        : () => {openAboutTransportMenu(context, obj)},
-                    style: ButtonStyle(
-                      backgroundColor:
-                          WidgetStateProperty.all<Color>(Colors.blueAccent),
-                      foregroundColor: WidgetStateProperty.all<Color>(
-                          const Color.fromARGB(255, 255, 255, 255)),
-                    ),
-                    child: Text("${obj.price}₽"),
-                  )
-                ])
-              ]))),
     );
   }
 
@@ -311,9 +195,7 @@ class Searchscreen extends State<SearchScreen> {
                               (el) => el.id == pointA,
                               orElse: () => none),
                           popupProps: PopupProps.menu(
-                              showSearchBox: true,
-                              disabledItemFn: (item) => item == 'Item 3',
-                              fit: FlexFit.loose),
+                              showSearchBox: true, fit: FlexFit.loose),
                           onChanged: (newValue) {
                             pointA = newValue?.id ?? -1;
                             pointAStr = newValue?.name ?? "Нет";
@@ -334,9 +216,7 @@ class Searchscreen extends State<SearchScreen> {
                                 (el) => el.id == pointB,
                                 orElse: () => none),
                             popupProps: PopupProps.menu(
-                                showSearchBox: true,
-                                disabledItemFn: (item) => item == 'Item 3',
-                                fit: FlexFit.loose),
+                                showSearchBox: true, fit: FlexFit.loose),
                             onChanged: (newValue) {
                               pointB = newValue?.id ?? -1;
                               pointBStr = newValue?.name ?? "Нет";
@@ -368,259 +248,12 @@ class Searchscreen extends State<SearchScreen> {
                           ? null
                           : () {
                               setState(() {
-                                searchTransport();
-                                print(123123);
                                 counter++;
                               });
                               Navigator.of(context).pop();
                             },
                       child: Text("Искать!")),
                 ],
-              ),
-            );
-          });
-        });
-  }
-
-  void openAboutTransportMenu(context, Transport transport) {
-    var time = "";
-    var diff = transport.end.difference(transport.start);
-    var hours = diff.inHours - diff.inDays * 24;
-
-    if (diff.inDays != 0) {
-      time += "${diff.inDays} Дней ";
-    }
-    if (hours != 0) {
-      time += "$hours Часов";
-    }
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (BuildContext bc) {
-        return StatefulBuilder(
-            builder: (BuildContext context, StateSetter setModalState) {
-          return Scaffold(
-              appBar: AppBar(title: const Text('О транспорте')),
-              body: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Center(
-                    child: ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: 450),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text('Маршрут: ${transport.name}'),
-                            Row(
-                              children: [
-                                Text(transport.startPoint),
-                                Expanded(child: Divider()),
-                                Text(
-                                  transport.endPoint,
-                                  textAlign: TextAlign.right,
-                                )
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Text(DateFormat('dd.MM.yyyy\nH:m')
-                                    .format(transport.start)),
-                                Expanded(
-                                  child: Divider(),
-                                ),
-                                Text(
-                                  DateFormat('dd.MM.yyyy\nH:m')
-                                      .format(transport.end),
-                                  textAlign: TextAlign.right,
-                                )
-                              ],
-                            ),
-                            Text('Приблизительное время поездки: $time'),
-                            Text(
-                                'Выполняется компанией ${transport.company}. Осуществляется перевозка ${transport.mean}'),
-                            Chip(
-                                label: Text(
-                                    "${transport.freeSpaceCount}/${transport.spaceCount} мест свободны")),
-                            ElevatedButton(
-                              onPressed: () {
-                                openBookingMenu(context, transport.id);
-                              },
-                              child: const Text('Забронировать'),
-                            ),
-                          ],
-                        )),
-                  )));
-        });
-      }),
-    );
-
-    // openBookingMenu(context, obj.id);
-  }
-
-  final _formKey = GlobalKey<FormState>();
-  final mysurnameController = TextEditingController();
-  final mynameController = TextEditingController();
-  final mymidnameController = TextEditingController();
-  final mypassController = MaskedTextController(mask: '0000 000000');
-  final myphoneController = MaskedTextController(mask: '8 (000) 000 00-00');
-  final myMailController = TextEditingController();
-
-  String? nameTest(value) {
-    var reg = RegExp("^([А-Яа-я]{3,30})\$");
-    if (value == null || value.isEmpty || !reg.hasMatch(value)) {
-      return 'Введите настоящие данные';
-    }
-    return null;
-  }
-
-  void openBookingMenu(context1, idx) {
-    showDialog(
-        context: context1,
-        builder: (BuildContext bc) {
-          return StatefulBuilder(
-              builder: (BuildContext context, StateSetter setModalState) {
-            return SafeArea(
-              child: Container(
-                padding: EdgeInsets.all(0),
-                child: Dialog(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10))),
-                  child: Container(
-                    padding: EdgeInsets.all(15),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          Text("Введите ваши данные"),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Фамилия"),
-                              TextFormField(
-                                  decoration: InputDecoration.collapsed(
-                                      hintText: 'Фамилия'),
-                                  controller: mysurnameController,
-                                  validator: nameTest),
-                            ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Имя"),
-                              TextFormField(
-                                  decoration: InputDecoration.collapsed(
-                                      hintText: 'Имя'),
-                                  controller: mynameController,
-                                  validator: nameTest),
-                            ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Отчество"),
-                              TextFormField(
-                                  decoration: InputDecoration.collapsed(
-                                      hintText: 'Отчество'),
-                                  controller: mymidnameController,
-                                  validator: nameTest),
-                            ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Паспорт"),
-                              TextFormField(
-                                keyboardType: TextInputType.number,
-                                decoration: InputDecoration.collapsed(
-                                    hintText: 'Паспорт'),
-                                controller: mypassController,
-                                validator: (value) {
-                                  if (value == null ||
-                                      value.isEmpty ||
-                                      value.length < 11) {
-                                    return 'Please enter some text';
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Телефон"),
-                              TextFormField(
-                                keyboardType: TextInputType.phone,
-                                decoration: InputDecoration.collapsed(
-                                    hintText: 'Телефон'),
-                                controller: myphoneController,
-                                validator: (value) {
-                                  if (value == null ||
-                                      value.isEmpty ||
-                                      value.length < 17) {
-                                    return 'Введите правильный телефон';
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Эл. почта"),
-                              TextFormField(
-                                keyboardType: TextInputType.emailAddress,
-                                decoration: InputDecoration.collapsed(
-                                    hintText: 'Эл. почта'),
-                                controller: myMailController,
-                                // The validator receives the text that the user has entered.
-                                validator: (value) {
-                                  var re = RegExp(
-                                      r'^([A-Za-z0-9.]{1,50})@([A-Za-z0-9.]{1,50})\.([A-Za-z0-9.]{1,5})$');
-                                  if (value == null ||
-                                      value.isEmpty ||
-                                      !re.hasMatch(value)) {
-                                    return 'Введите правильный эл. адрес';
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ],
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                try {
-                                  book(
-                                      idx,
-                                      mynameController.text,
-                                      mysurnameController.text,
-                                      mymidnameController.text,
-                                      myMailController.text,
-                                      int.parse(mypassController.unmasked),
-                                      int.parse(myphoneController.unmasked));
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('Принято!')),
-                                  );
-                                } catch (asd) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text(
-                                            'Не забронировано из-за соединения с сетью!')),
-                                  );
-                                }
-
-                                Navigator.of(context).pop();
-                                Navigator.of(context1).pop();
-                              }
-                            },
-                            child: const Text('Забронировать билет'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
               ),
             );
           });
