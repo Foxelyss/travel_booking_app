@@ -101,7 +101,7 @@ class Searchscreen extends State<SearchScreen> {
     decoration: InputDecoration(
         contentPadding: EdgeInsets.fromLTRB(12, 12, 0, 0),
         border: OutlineInputBorder(),
-        constraints: BoxConstraints(maxHeight: 40)),
+        constraints: BoxConstraints(minHeight: 50)),
   );
 
   int mean = -1;
