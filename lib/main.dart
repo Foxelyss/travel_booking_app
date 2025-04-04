@@ -62,7 +62,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
   int _selectedIndex = 0;
 
   final List<Widget> _pages = <Widget>[
@@ -70,12 +69,6 @@ class _MyHomePageState extends State<MyHomePage> {
     SearchScreen(title: "Поиск"),
     ProfileScreen(),
   ];
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {

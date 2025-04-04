@@ -22,7 +22,7 @@ class SearchScreen extends StatefulWidget {
 }
 
 class Searchscreen extends State<SearchScreen> {
-  List<Transport> _offers = <Transport>[];
+  List<Transport> offers = <Transport>[];
 
   static List<Point> points = [];
   static List<TransportingMeans> means = [];
@@ -81,7 +81,7 @@ class Searchscreen extends State<SearchScreen> {
     var pointsJson = jsonDecode(utf8.decode(response.bodyBytes));
 
     setState(() {
-      _offers = Transport.fromJsonList(pointsJson);
+      offers = Transport.fromJsonList(pointsJson);
     });
   }
 
@@ -398,7 +398,6 @@ class Searchscreen extends State<SearchScreen> {
       MaterialPageRoute(builder: (BuildContext bc) {
         return StatefulBuilder(
             builder: (BuildContext context, StateSetter setModalState) {
-          var date = selectedDate;
           return Scaffold(
               appBar: AppBar(title: const Text('О транспорте')),
               body: Padding(

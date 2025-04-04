@@ -1,11 +1,7 @@
-import 'dart:convert';
-
 import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:intl/intl.dart';
-import 'package:travel_booking_app/config.dart';
 import 'package:travel_booking_app/server_api.dart';
 import 'package:travel_booking_app/transport.dart';
 import 'package:travel_booking_app/pagination_errors.dart';
@@ -83,77 +79,73 @@ class _ListViewScreenState extends State<ListViewScreen> {
     }
 
     return Card(
-        child: InkWell(
-            onTap: obj.freeSpaceCount == 0
-                ? null
-                : () => {openAboutTransportMenu(context, obj)},
-            child: Container(
-                padding: EdgeInsets.all(9),
-                child: Column(
-                  spacing: 10,
-                  children: [
-                    Text(obj.mean),
-                    Row(
-                      children: [
-                        Text.rich(
-                          TextSpan(
-                            // with no TextStyle it will have default text style
-                            text: "",
-                            children: <TextSpan>[
-                              TextSpan(
-                                  text: DateFormat('dd.MM.yyyy\n')
-                                      .format(obj.start),
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
-                              TextSpan(
-                                text: DateFormat('HH:mm').format(obj.start),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: Row(children: <Widget>[
-                            Expanded(child: Divider()),
-                            Text("   $time   "),
-                            Expanded(child: Divider()),
-                          ]),
-                        ),
-                        Text.rich(
-                          TextSpan(
-                            // with no TextStyle it will have default text style
-                            text: "",
-                            children: <TextSpan>[
-                              TextSpan(
-                                  text: DateFormat('dd.MM.yyyy\n')
-                                      .format(obj.end),
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
-                              TextSpan(
-                                text: DateFormat('HH:mm').format(obj.end),
-                              ),
-                            ],
-                          ),
+      child: InkWell(
+        onTap: obj.freeSpaceCount == 0
+            ? null
+            : () => {openAboutTransportMenu(context, obj)},
+        child: Container(
+          padding: EdgeInsets.all(9),
+          child: Column(
+            spacing: 10,
+            children: [
+              Text(obj.mean),
+              Row(
+                children: [
+                  Text.rich(
+                    TextSpan(
+                      text: "",
+                      children: <TextSpan>[
+                        TextSpan(
+                            text: DateFormat('dd.MM.yyyy\n').format(obj.start),
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        TextSpan(
+                          text: DateFormat('HH:mm').format(obj.start),
                         ),
                       ],
                     ),
-                    Text(obj.company),
-                    Divider(
-                      height: 6,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      spacing: 6,
-                      children: [
-                        Text("${obj.freeSpaceCount}/${obj.spaceCount}",
-                            style:
-                                const TextStyle(fontWeight: FontWeight.w300)),
-                        Text("${obj.price}₽",
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 20)),
+                  ),
+                  Expanded(
+                    child: Row(children: <Widget>[
+                      Expanded(child: Divider()),
+                      Text("   $time   "),
+                      Expanded(child: Divider()),
+                    ]),
+                  ),
+                  Text.rich(
+                    TextSpan(
+                      text: "",
+                      children: <TextSpan>[
+                        TextSpan(
+                            text: DateFormat('dd.MM.yyyy\n').format(obj.end),
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        TextSpan(
+                          text: DateFormat('HH:mm').format(obj.end),
+                        ),
                       ],
-                    )
-                  ],
-                ))));
+                    ),
+                  ),
+                ],
+              ),
+              Text(obj.company),
+              Divider(
+                height: 6,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                spacing: 6,
+                children: [
+                  Text("${obj.freeSpaceCount}/${obj.spaceCount}",
+                      style: const TextStyle(fontWeight: FontWeight.w300)),
+                  Text("${obj.price}₽",
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 20)),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   void openAboutTransportMenu(context, Transport transport) {
