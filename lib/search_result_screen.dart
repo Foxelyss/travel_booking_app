@@ -57,7 +57,7 @@ class _ListViewScreenState extends State<ListViewScreen> {
 
   Future<List<Transport>> searchTransport(int page) async {
     var list =
-        await Serverapi.searchTransport(pointA, pointB, wantedTime, mean, page);
+        await ServerAPI.searchTransport(pointA, pointB, wantedTime, mean, page);
 
     if (list.isEmpty) {
       nextPage = false;
@@ -72,10 +72,10 @@ class _ListViewScreenState extends State<ListViewScreen> {
     var hours = diff.inHours - diff.inDays * 24;
 
     if (diff.inDays != 0) {
-      time += "${diff.inDays} ${Serverapi.russianDays(diff.inDays)}";
+      time += "${diff.inDays} ${ServerAPI.russianDays(diff.inDays)}";
     }
     if (hours != 0) {
-      time += "${hours} ${Serverapi.russianHours(hours)}";
+      time += "${hours} ${ServerAPI.russianHours(hours)}";
     }
 
     return Card(
@@ -381,7 +381,7 @@ class _ListViewScreenState extends State<ListViewScreen> {
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
                                 try {
-                                  Serverapi.book(
+                                  ServerAPI.book(
                                       idx,
                                       mynameController.text,
                                       mysurnameController.text,

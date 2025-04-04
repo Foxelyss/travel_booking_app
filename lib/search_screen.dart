@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'package:travel_booking_app/point.dart';
 import 'package:travel_booking_app/search_result_screen.dart';
+import 'package:travel_booking_app/server_api.dart';
 import 'package:travel_booking_app/transport.dart';
 import 'package:travel_booking_app/transporting_means.dart';
 import 'package:travel_booking_app/config.dart';
@@ -34,29 +35,11 @@ class Searchscreen extends State<SearchScreen> {
   bool nextGoing = false;
 
   Future<void> getPoints() async {
-    http.Response response =
-        await http.get(Uri.http(serverURI, '/api/search/points'));
-
-    if (response.statusCode == 200) {
-    } else {
-      throw Exception('Error');
-    }
-
-    var pointsJson = jsonDecode(utf8.decode(response.bodyBytes));
-    points = Point.fromJsonList(pointsJson);
+    points = await ServerAPI.getPoints();
   }
 
   Future<void> getMeans() async {
-    http.Response response =
-        await http.get(Uri.http(serverURI, '/api/search/means'));
-
-    if (response.statusCode == 200) {
-    } else {
-      throw Exception('Error');
-    }
-    var meansJson = jsonDecode(utf8.decode(response.bodyBytes));
-    means = TransportingMeans.fromJsonList(meansJson);
-    means.add(asd123);
+    means = await ServerAPI.getMeans();
   }
 
   @override

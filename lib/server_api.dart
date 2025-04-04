@@ -2,12 +2,16 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:travel_booking_app/point.dart';
 import 'package:travel_booking_app/transport.dart';
+import 'package:travel_booking_app/transporting_means.dart';
 
 import 'config.dart';
 
-class Serverapi {
+class ServerAPI {
   static final noConnectionError = "Невозможно подключиться к серверу";
+  static TransportingMeans everythingTransportingMean =
+      TransportingMeans(id: -1, name: "Все виды транспорта");
 
   static Future<void> book(int transporting, String name, String surname,
       String middleName, String email, int passport, int phone) async {
@@ -57,6 +61,34 @@ class Serverapi {
     } on Exception {
       rethrow;
     }
+  }
+
+  static Future<List<Point>> getPoints() async {
+    http.Response response =
+        await http.get(Uri.http(serverURI, '/api/search/points'));
+
+    if (response.statusCode == 200) {
+    } else {
+      throw Exception('Error');
+    }
+
+    var pointsJson = jsonDecode(utf8.decode(response.bodyBytes));
+    return Point.fromJsonList(pointsJson);
+  }
+
+  static Future<List<TransportingMeans>> getMeans() async {
+    http.Response response =
+        await http.get(Uri.http(serverURI, '/api/search/means'));
+
+    if (response.statusCode == 200) {
+    } else {
+      throw Exception('Error');
+    }
+    var meansJson = jsonDecode(utf8.decode(response.bodyBytes));
+
+    var means = TransportingMeans.fromJsonList(meansJson);
+    means.add(everythingTransportingMean);
+    return means;
   }
 
   static String russianDays(int n) {
