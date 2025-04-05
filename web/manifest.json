@@ -1,11 +1,11 @@
 {
-    "name": "travel_booking_app",
-    "short_name": "travel_booking_app",
+    "name": "Пассажирские перевозки",
+    "short_name": "Транспорт",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Агрегатор пассажирских перевозок",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
