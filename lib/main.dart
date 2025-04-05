@@ -57,8 +57,9 @@ class MyApp extends StatelessWidget {
           dropdownMenuTheme: DropdownMenuThemeData(
               inputDecorationTheme:
                   InputDecorationTheme(border: UnderlineInputBorder())),
-          inputDecorationTheme:
-              InputDecorationTheme(border: OutlineInputBorder())),
+          inputDecorationTheme: InputDecorationTheme(
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(18))))),
       home: const MyHomePage(title: 'Пассажирские перевозки'),
     );
   }

@@ -127,6 +127,7 @@ class _ListViewScreenState extends State<ListViewScreen> {
                     ]),
                   ),
                   Text.rich(
+                    textAlign: TextAlign.end,
                     TextSpan(
                       text: "",
                       children: <TextSpan>[
@@ -213,24 +214,73 @@ class _ListViewScreenState extends State<ListViewScreen> {
                     ),
                     Row(
                       children: [
-                        Text(DateFormat('dd.MM.yyyy HH:mm')
-                            .format(transport.start)),
+                        Text.rich(
+                          textAlign: TextAlign.start,
+                          TextSpan(
+                            text: "",
+                            children: <TextSpan>[
+                              TextSpan(
+                                  text: DateFormat('dd.MM.yyyy\n')
+                                      .format(transport.start),
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
+                              TextSpan(
+                                text:
+                                    DateFormat('HH:mm').format(transport.start),
+                              ),
+                            ],
+                          ),
+                        ),
                         Expanded(
                           child: Divider(),
                         ),
-                        Text(
-                          DateFormat('dd.MM.yyyy HH:mm').format(transport.end),
-                        )
+                        Text.rich(
+                          textAlign: TextAlign.end,
+                          TextSpan(
+                            text: "",
+                            children: <TextSpan>[
+                              TextSpan(
+                                  text: DateFormat('dd.MM.yyyy\n')
+                                      .format(transport.end),
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
+                              TextSpan(
+                                text: DateFormat('HH:mm').format(transport.end),
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                     SizedBox(
                       height: 32,
                     ),
-                    Text('Время поездки: $time'),
-                    Text('Исполняется ${transport.company}'),
-                    Text("Тип перевозки: ${transport.mean}"),
-                    Text(
-                        "Наличие мест: свободно ${transport.freeSpaceCount}/${transport.spaceCount}"),
+                    Text.rich(
+                      textAlign: TextAlign.start,
+                      TextSpan(
+                        text: "",
+                        children: <TextSpan>[
+                          TextSpan(
+                              text: 'Время поездки: ',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          TextSpan(text: '$time\n'),
+                          TextSpan(
+                              text: 'Исполнитель: ',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          TextSpan(text: '${transport.company}\n'),
+                          TextSpan(
+                              text: "Тип перевозки: ",
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          TextSpan(text: "${transport.mean}\n"),
+                          TextSpan(
+                              text: "Наличие мест: ",
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          TextSpan(
+                              text:
+                                  "свободно ${transport.freeSpaceCount}/${transport.spaceCount}"),
+                        ],
+                      ),
+                    ),
                     Spacer(),
                     Row(
                       children: [
@@ -258,20 +308,22 @@ class _ListViewScreenState extends State<ListViewScreen> {
 
   final _formKey = GlobalKey<FormState>();
   final mysurnameController = TextEditingController();
-  final mynameController = TextEditingController();
-  final mymidnameController = TextEditingController();
   final mypassController = MaskedTextController(mask: '0000 000000');
   final myphoneController = MaskedTextController(mask: '8 (000) 000 00-00');
   final myMailController = TextEditingController();
 
   String? nameTest(value) {
-    var reg = RegExp("^([А-Яа-я]{3,30})\$");
+    var reg = RegExp(r'^\h*[а-яА-Я]+\h+[а-яА-Я]+(?:\h+[а-яА-Я]+)?$');
+
     if (value == null || value.isEmpty || !reg.hasMatch(value)) {
       return 'Введите настоящие данные';
     }
+
     return null;
   }
 
+  static final border =
+      OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(18)));
   void openBookingMenu(context1, idx) {
     Navigator.push(
       context1,
@@ -288,132 +340,107 @@ class _ListViewScreenState extends State<ListViewScreen> {
                   key: _formKey,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    spacing: 16,
                     children: <Widget>[
-                      Text("Введите ваши данные"),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Фамилия"),
-                          TextFormField(
-                              decoration: InputDecoration.collapsed(
-                                  hintText: 'Фамилия'),
-                              controller: mysurnameController,
-                              validator: nameTest),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Имя"),
-                          TextFormField(
-                              decoration:
-                                  InputDecoration.collapsed(hintText: 'Имя'),
-                              controller: mynameController,
-                              validator: nameTest),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Отчество"),
-                          TextFormField(
-                              decoration: InputDecoration.collapsed(
-                                  hintText: 'Отчество'),
-                              controller: mymidnameController,
-                              validator: nameTest),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Паспорт"),
-                          TextFormField(
-                            keyboardType: TextInputType.number,
-                            decoration:
-                                InputDecoration.collapsed(hintText: 'Паспорт'),
-                            controller: mypassController,
-                            validator: (value) {
-                              if (value == null ||
-                                  value.isEmpty ||
-                                  value.length < 11) {
-                                return 'Please enter some text';
-                              }
-                              return null;
-                            },
-                          ),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Телефон"),
-                          TextFormField(
-                            keyboardType: TextInputType.phone,
-                            decoration:
-                                InputDecoration.collapsed(hintText: 'Телефон'),
-                            controller: myphoneController,
-                            validator: (value) {
-                              if (value == null ||
-                                  value.isEmpty ||
-                                  value.length < 17) {
-                                return 'Введите правильный телефон';
-                              }
-                              return null;
-                            },
-                          ),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Эл. почта"),
-                          TextFormField(
-                            keyboardType: TextInputType.emailAddress,
-                            decoration: InputDecoration.collapsed(
-                                hintText: 'Эл. почта'),
-                            controller: myMailController,
-                            // The validator receives the text that the user has entered.
-                            validator: (value) {
-                              var re = RegExp(
-                                  r'^([A-Za-z0-9.]{1,50})@([A-Za-z0-9.]{1,50})\.([A-Za-z0-9.]{1,5})$');
-                              if (value == null ||
-                                  value.isEmpty ||
-                                  !re.hasMatch(value)) {
-                                return 'Введите правильный эл. адрес';
-                              }
-                              return null;
-                            },
-                          ),
-                        ],
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            try {
-                              ServerAPI.book(
-                                  idx,
-                                  mynameController.text,
-                                  mysurnameController.text,
-                                  mymidnameController.text,
-                                  myMailController.text,
-                                  int.parse(mypassController.unmasked),
-                                  int.parse(myphoneController.unmasked));
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Принято!')),
-                              );
-                            } catch (asd) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                        'Не забронировано из-за соединения с сетью!')),
-                              );
-                            }
-
-                            Navigator.of(context).pop();
-                            Navigator.of(context1).pop();
+                      TextFormField(
+                          decoration:
+                              InputDecoration(labelText: 'ФИО', border: border),
+                          controller: mysurnameController,
+                          validator: nameTest),
+                      TextFormField(
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                            labelText: 'Серия и номер паспорта',
+                            border: border),
+                        controller: mypassController,
+                        validator: (value) {
+                          if (value == null ||
+                              value.isEmpty ||
+                              value.length < 11) {
+                            return 'Please enter some text';
                           }
+                          return null;
                         },
-                        child: const Text('Забронировать билет'),
+                      ),
+                      TextFormField(
+                        keyboardType: TextInputType.phone,
+                        decoration: InputDecoration(
+                            labelText: 'Телефон', border: border),
+                        controller: myphoneController,
+                        validator: (value) {
+                          if (value == null ||
+                              value.isEmpty ||
+                              value.length < 17) {
+                            return 'Введите правильный телефон';
+                          }
+                          return null;
+                        },
+                      ),
+                      TextFormField(
+                        keyboardType: TextInputType.emailAddress,
+                        decoration:
+                            InputDecoration(hintText: 'E-mail', border: border),
+                        controller: myMailController,
+                        // The validator receives the text that the user has entered.
+                        validator: (value) {
+                          var re = RegExp(
+                              r'^([A-Za-z0-9.]{1,50})@([A-Za-z0-9.]{1,50})\.([A-Za-z0-9.]{1,5})$');
+                          if (value == null ||
+                              value.isEmpty ||
+                              !re.hasMatch(value)) {
+                            return 'Введите правильный эл. адрес';
+                          }
+                          return null;
+                        },
+                      ),
+                      Spacer(),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  try {
+                                    String name = "";
+                                    String surname = "";
+                                    String middle_name = "";
+
+                                    var strings =
+                                        mysurnameController.text.split(" ");
+
+                                    surname = strings[0];
+                                    name = strings[1];
+                                    try {
+                                      middle_name = strings[2];
+                                    } catch (e) {}
+
+                                    ServerAPI.book(
+                                        idx,
+                                        name,
+                                        surname,
+                                        middle_name,
+                                        myMailController.text,
+                                        int.parse(mypassController.unmasked),
+                                        int.parse(myphoneController.unmasked));
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text('Принято!')),
+                                    );
+                                  } catch (asd) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text(
+                                              'Не забронировано из-за соединения с сетью!')),
+                                    );
+                                  }
+
+                                  Navigator.of(context).pop();
+                                  Navigator.of(context1).pop();
+                                }
+                              },
+                              child: const Text('Забронировать билет'),
+                            ),
+                          )
+                        ],
                       ),
                     ],
                   ),

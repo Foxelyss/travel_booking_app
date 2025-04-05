@@ -26,6 +26,8 @@ class Transport {
   });
 
   factory Transport.fromJson(Map<String, dynamic> json) {
+    String a = "";
+    a.split("|");
     return Transport(
         id: json["id"],
         name: json["name"],

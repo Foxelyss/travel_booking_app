@@ -113,21 +113,24 @@ class Searchscreen extends State<SearchScreen> {
         context: context,
         showDragHandle: true,
         isScrollControlled: true,
-        constraints: BoxConstraints(maxHeight: 780, minHeight: 700),
         builder: (BuildContext bc) {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setModalState) {
             var date = selectedDate;
             return ConstrainedBox(
               constraints: BoxConstraints(
-                  maxHeight: 700,
-                  minHeight: MediaQuery.of(context).size.height * 0.33),
+                  maxHeight: 400,
+                  minHeight: MediaQuery.of(context).size.height * 0.23),
               child: Padding(
                 padding: EdgeInsets.all(12),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Text("Выберите место отправления и прибытия"),
+                    Text(
+                      "Выберите место отправления и прибытия",
+                      style:
+                          TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
+                    ),
                     Row(
                       children: [
                         Expanded(
@@ -257,26 +260,14 @@ class Searchscreen extends State<SearchScreen> {
                         )
                       ],
                     ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextButton(
-                              onPressed: pointA == -1 || pointB == -1
-                                  ? null
-                                  : () {
-                                      Navigator.of(context).pop();
-                                      setState(() {});
-                                    },
-                              child: Text("Искать!")),
-                        )
-                      ],
-                    )
                   ],
                 ),
               ),
             );
           });
-        });
+        }).whenComplete(() {
+      setState(() {});
+    });
   }
 
   Point? selectedDeparture() {
