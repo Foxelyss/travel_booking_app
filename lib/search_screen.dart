@@ -40,7 +40,7 @@ class Searchscreen extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(0.0),
       child: Column(
         children: [
           InkWell(
@@ -48,6 +48,9 @@ class Searchscreen extends State<SearchScreen> {
             onTap: () {
               openSearchMenu(context);
             },
+          ),
+          SizedBox(
+            height: 16,
           ),
           Expanded(
               child: ListViewScreen(
@@ -63,7 +66,7 @@ class Searchscreen extends State<SearchScreen> {
 
   Widget searchHint() {
     return Container(
-      padding: EdgeInsets.only(bottom: 22),
+      padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 16),
       child: Column(
         children: [
           Row(

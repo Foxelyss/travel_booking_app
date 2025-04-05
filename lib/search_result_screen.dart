@@ -55,6 +55,7 @@ class _ListViewScreenState extends State<ListViewScreen> {
     return PagingListener(
       controller: _pagingController,
       builder: (context, state, fetchNextPage) => PagedListView<int, Transport>(
+        padding: EdgeInsets.symmetric(horizontal: 16),
         state: state,
         fetchNextPage: fetchNextPage,
         builderDelegate: PagedChildBuilderDelegate(

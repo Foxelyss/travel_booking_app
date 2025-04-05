@@ -20,7 +20,7 @@ class CustomFirstPageError extends StatelessWidget {
             Text(
               'Что-то пошло не так',
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleLarge,
+              style: Theme.of(context).textTheme.titleMedium,
             ),
             if (state.error != null) ...[
               const SizedBox(
@@ -42,7 +42,7 @@ class CustomFirstPageError extends StatelessWidget {
                 label: const Text(
                   'Попробовать ещё',
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 14,
                   ),
                 ),
               ),
