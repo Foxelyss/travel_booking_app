@@ -1,7 +1,9 @@
 class Transport {
   final int id;
   final String startPoint;
+  final String startPointTown;
   final String endPoint;
+  final String endPointTown;
   final String name;
   final DateTime start;
   final DateTime end;
@@ -17,7 +19,9 @@ class Transport {
     required this.start,
     required this.end,
     required this.startPoint,
+    required this.startPointTown,
     required this.endPoint,
+    required this.endPointTown,
     required this.price,
     required this.mean,
     required this.company,
@@ -26,15 +30,18 @@ class Transport {
   });
 
   factory Transport.fromJson(Map<String, dynamic> json) {
-    String a = "";
-    a.split("|");
+    List<String> a = (json["startPoint"] as String).split("|");
+    List<String> b = (json["endPoint"] as String).split("|");
+
     return Transport(
         id: json["id"],
         name: json["name"],
         start: DateTime.parse(json["start"]),
         end: DateTime.parse(json["end"]),
-        startPoint: json["startPoint"].replaceAll("|", "\n"),
-        endPoint: json["endPoint"].replaceAll("|", "\n"),
+        startPoint: a[0],
+        startPointTown: a[1],
+        endPoint: b[0],
+        endPointTown: b[1],
         price: json["price"],
         mean: json["mean"],
         company: json["company"],

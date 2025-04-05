@@ -186,115 +186,158 @@ class _ListViewScreenState extends State<ListViewScreen> {
             appBar: AppBar(title: const Text('О транспорте')),
             body: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: 450),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Text('Маршрут: ${transport.name}'),
-                    ),
-                    SizedBox(
-                      height: 36,
-                    ),
-                    Row(
-                      children: [
-                        Text(transport.startPoint),
-                        Spacer(),
-                        Text(
-                          transport.endPoint,
-                          textAlign: TextAlign.right,
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 32),
-                      child: Divider(),
-                    ),
-                    Row(
-                      children: [
-                        Text.rich(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 450),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: Text.rich(
                           textAlign: TextAlign.start,
+                          style: TextStyle(fontSize: 20),
                           TextSpan(
                             text: "",
                             children: <TextSpan>[
                               TextSpan(
-                                  text: DateFormat('dd.MM.yyyy\n')
-                                      .format(transport.start),
+                                  text: "Маршрут: ",
                                   style:
                                       TextStyle(fontWeight: FontWeight.bold)),
                               TextSpan(
-                                text:
-                                    DateFormat('HH:mm').format(transport.start),
+                                text: transport.name,
                               ),
                             ],
                           ),
                         ),
-                        Expanded(
-                          child: Divider(),
-                        ),
-                        Text.rich(
-                          textAlign: TextAlign.end,
-                          TextSpan(
-                            text: "",
-                            children: <TextSpan>[
-                              TextSpan(
-                                  text: DateFormat('dd.MM.yyyy\n')
-                                      .format(transport.end),
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
-                              TextSpan(
-                                text: DateFormat('HH:mm').format(transport.end),
-                              ),
-                            ],
+                      ),
+                      SizedBox(
+                        height: 36,
+                      ),
+                      Row(
+                        children: [
+                          Text.rich(
+                            textAlign: TextAlign.start,
+                            TextSpan(
+                              text: "",
+                              children: <TextSpan>[
+                                TextSpan(
+                                    text: "${transport.startPointTown}\n",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                TextSpan(
+                                  text: transport.startPoint,
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 32,
-                    ),
-                    Text.rich(
-                      textAlign: TextAlign.start,
-                      TextSpan(
-                        text: "",
-                        children: <TextSpan>[
-                          TextSpan(
-                              text: 'Время поездки: ',
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          TextSpan(text: '$time\n'),
-                          TextSpan(
-                              text: 'Исполнитель: ',
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          TextSpan(text: '${transport.company}\n'),
-                          TextSpan(
-                              text: "Тип перевозки: ",
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          TextSpan(text: "${transport.mean}\n"),
-                          TextSpan(
-                              text: "Наличие мест: ",
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          TextSpan(
-                              text:
-                                  "свободно ${transport.freeSpaceCount}/${transport.spaceCount}"),
+                          Spacer(),
+                          Text.rich(
+                            textAlign: TextAlign.end,
+                            TextSpan(
+                              text: "",
+                              children: <TextSpan>[
+                                TextSpan(
+                                    text: "${transport.endPointTown}\n",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                TextSpan(
+                                  text: transport.endPoint,
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
-                    ),
-                    Spacer(),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              openBookingMenu(context, transport.id);
-                            },
-                            child: const Text('Забронировать'),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 32),
+                        child: Divider(),
+                      ),
+                      Row(
+                        children: [
+                          Text.rich(
+                            textAlign: TextAlign.start,
+                            TextSpan(
+                              text: "",
+                              children: <TextSpan>[
+                                TextSpan(
+                                    text: DateFormat('dd.MM.yyyy\n')
+                                        .format(transport.start),
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                TextSpan(
+                                  text: DateFormat('HH:mm')
+                                      .format(transport.start),
+                                ),
+                              ],
+                            ),
                           ),
-                        )
-                      ],
-                    ),
-                  ],
+                          Expanded(
+                            child: Divider(),
+                          ),
+                          Text.rich(
+                            textAlign: TextAlign.end,
+                            TextSpan(
+                              text: "",
+                              children: <TextSpan>[
+                                TextSpan(
+                                    text: DateFormat('dd.MM.yyyy\n')
+                                        .format(transport.end),
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                TextSpan(
+                                  text:
+                                      DateFormat('HH:mm').format(transport.end),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 32,
+                      ),
+                      Text.rich(
+                        textAlign: TextAlign.start,
+                        TextSpan(
+                          text: "",
+                          children: <TextSpan>[
+                            TextSpan(
+                                text: 'Время поездки: ',
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            TextSpan(text: '$time\n'),
+                            TextSpan(
+                                text: 'Исполнитель: ',
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            TextSpan(text: '${transport.company}\n'),
+                            TextSpan(
+                                text: "Тип перевозки: ",
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            TextSpan(text: "${transport.mean}\n"),
+                            TextSpan(
+                                text: "Наличие мест: ",
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            TextSpan(
+                                text:
+                                    "свободно ${transport.freeSpaceCount}/${transport.spaceCount}"),
+                          ],
+                        ),
+                      ),
+                      Spacer(),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                openBookingMenu(context, transport.id);
+                              },
+                              child: const Text('Забронировать'),
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
