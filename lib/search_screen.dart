@@ -190,9 +190,7 @@ class Searchscreen extends State<SearchScreen> {
                             ),
                             items: (f, cs) => points,
                             compareFn: (i, s) => i.isEqual(s),
-                            selectedItem: points.firstWhere(
-                                (el) => el.id == pointA,
-                                orElse: () => none),
+                            selectedItem: selectedDeparture(),
                             popupProps: PopupProps.menu(
                                 showSearchBox: true, fit: FlexFit.loose),
                             onChanged: (newValue) {
@@ -221,9 +219,7 @@ class Searchscreen extends State<SearchScreen> {
                                     constraints: BoxConstraints(minHeight: 50)),
                               ),
                               compareFn: (i, s) => i.isEqual(s),
-                              selectedItem: points.firstWhere(
-                                  (el) => el.id == pointB,
-                                  orElse: () => none),
+                              selectedItem: selectedArrival(),
                               popupProps: PopupProps.menu(
                                   showSearchBox: true, fit: FlexFit.loose),
                               onChanged: (newValue) {
@@ -251,9 +247,7 @@ class Searchscreen extends State<SearchScreen> {
                                     constraints: BoxConstraints(minHeight: 50)),
                               ),
                               compareFn: (i, s) => i.isEqual(s),
-                              selectedItem: means.firstWhere(
-                                  (el) => el.id == mean,
-                                  orElse: () => allTransportingMeans),
+                              selectedItem: selectedMean(),
                               popupProps: PopupProps.menu(fit: FlexFit.loose),
                               onChanged: (newValue) {
                                 setModalState(() {
@@ -283,5 +277,39 @@ class Searchscreen extends State<SearchScreen> {
             );
           });
         });
+  }
+
+  Point? selectedDeparture() {
+    Point a = points.firstWhere((el) => el.id == pointA, orElse: () => none);
+
+    if (a == none) {
+      return null;
+    }
+
+    return a;
+  }
+
+  Point? selectedArrival() {
+    Point a = points.firstWhere((el) => el.id == pointB, orElse: () => none);
+
+    if (a == none) {
+      return null;
+    }
+
+    return a;
+  }
+
+  static final TransportingMeans noneMean =
+      TransportingMeans(id: -2, name: "asd");
+
+  TransportingMeans? selectedMean() {
+    TransportingMeans a =
+        means.firstWhere((el) => el.id == mean, orElse: () => noneMean);
+
+    if (a == noneMean) {
+      return null;
+    }
+
+    return a;
   }
 }
