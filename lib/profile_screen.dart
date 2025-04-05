@@ -174,7 +174,7 @@ class ProfileScreen extends StatelessWidget {
             const EdgeInsets.only(left: 14, right: 14, top: 10, bottom: 16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          spacing: 32,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Form(
               key: _formKey,
@@ -182,11 +182,17 @@ class ProfileScreen extends StatelessWidget {
                 spacing: 12,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Эл. почта:"),
+                  Text(
+                    "Реквизиты билетов",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  ),
                   TextFormField(
                     keyboardType: TextInputType.text,
-                    decoration:
-                        InputDecoration.collapsed(hintText: 'Эл. почта'),
+                    decoration: InputDecoration(
+                      labelText: 'E-mail',
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(18))),
+                    ),
                     controller: myEmailController,
                     // The validator receives the text that the user has entered.
                     validator: (value) {
@@ -201,10 +207,13 @@ class ProfileScreen extends StatelessWidget {
                       return null;
                     },
                   ),
-                  Text("Паспорт:"),
                   TextFormField(
                     keyboardType: TextInputType.number,
-                    decoration: InputDecoration.collapsed(hintText: 'Паспорт'),
+                    decoration: InputDecoration(
+                        labelText: 'Серия и номер паспорта',
+                        border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(18)))),
                     controller: mypassController,
                     validator: (value) {
                       if (value == null || value.isEmpty || value.length < 10) {
@@ -216,10 +225,24 @@ class ProfileScreen extends StatelessWidget {
                 ],
               ),
             ),
+            SizedBox(
+              height: 30,
+            ),
+            Text(
+              "Управление",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+            ),
+            SizedBox(
+              height: 20,
+            ),
             Row(
               children: [
                 Expanded(
-                    child: ElevatedButton(
+                    child: ElevatedButton.icon(
+                  icon: Icon(Icons.receipt_long_rounded),
+                  style: ButtonStyle(
+                    alignment: Alignment.centerLeft,
+                  ),
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -254,7 +277,7 @@ class ProfileScreen extends StatelessWidget {
                       }
                     }
                   },
-                  child: const Text('Чеки'),
+                  label: const Text('Чеки'),
                 ))
               ],
             ),
@@ -262,12 +285,24 @@ class ProfileScreen extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                    child: TextButton(
-                        onPressed: () {
-                          SystemChannels.platform
-                              .invokeMethod('SystemNavigator.pop');
-                        },
-                        child: Text("Выход из приложения")))
+                  child: TextButton.icon(
+                    onPressed: () {
+                      SystemChannels.platform
+                          .invokeMethod('SystemNavigator.pop');
+                    },
+                    icon: Icon(Icons.logout_outlined),
+                    style: ButtonStyle(
+                      alignment: Alignment.centerLeft,
+                      iconColor: WidgetStatePropertyAll(Colors.red),
+                    ),
+                    label: Text(
+                      "Выход из приложения",
+                      style: TextStyle(
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
+                )
               ],
             )
           ],

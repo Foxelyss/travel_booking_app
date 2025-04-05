@@ -40,26 +40,23 @@ class Searchscreen extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(3.0),
-      child: Container(
-        padding: EdgeInsets.all(6),
-        child: Column(
-          children: [
-            InkWell(
-              child: searchHint(),
-              onTap: () {
-                openSearchMenu(context);
-              },
-            ),
-            Expanded(
-                child: ListViewScreen(
-              pointA: pointA,
-              pointB: pointB,
-              mean: mean,
-              wantedTime: 0,
-            ))
-          ],
-        ),
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: [
+          InkWell(
+            child: searchHint(),
+            onTap: () {
+              openSearchMenu(context);
+            },
+          ),
+          Expanded(
+              child: ListViewScreen(
+            pointA: pointA,
+            pointB: pointB,
+            mean: mean,
+            wantedTime: 0,
+          ))
+        ],
       ),
     );
   }
@@ -114,19 +111,23 @@ class Searchscreen extends State<SearchScreen> {
     getMeans();
     showModalBottomSheet(
         context: context,
+        showDragHandle: true,
+        isScrollControlled: true,
+        constraints: BoxConstraints(maxHeight: 780, minHeight: 700),
         builder: (BuildContext bc) {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setModalState) {
             var date = selectedDate;
             return ConstrainedBox(
               constraints: BoxConstraints(
-                  maxHeight: 500,
+                  maxHeight: 700,
                   minHeight: MediaQuery.of(context).size.height * 0.33),
               child: Padding(
                 padding: EdgeInsets.all(12),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
+                    Text("Выберите место отправления и прибытия"),
                     Row(
                       children: [
                         Expanded(
@@ -174,12 +175,19 @@ class Searchscreen extends State<SearchScreen> {
                       ],
                     ),
                     Row(
-                      spacing: 30,
                       children: [
-                        Text("От: "),
                         Expanded(
                           child: DropdownSearch<Point>(
-                            decoratorProps: dropStyle,
+                            decoratorProps: DropDownDecoratorProps(
+                              decoration: InputDecoration(
+                                  labelText: "Место отправления",
+                                  contentPadding:
+                                      EdgeInsets.fromLTRB(12, 12, 0, 0),
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(18))),
+                                  constraints: BoxConstraints(minHeight: 50)),
+                            ),
                             items: (f, cs) => points,
                             compareFn: (i, s) => i.isEqual(s),
                             selectedItem: points.firstWhere(
@@ -198,13 +206,20 @@ class Searchscreen extends State<SearchScreen> {
                       ],
                     ),
                     Row(
-                      spacing: 30,
                       children: [
-                        Text("В: "),
                         Expanded(
                           child: DropdownSearch<Point>(
                               items: (f, cs) => points,
-                              decoratorProps: dropStyle,
+                              decoratorProps: DropDownDecoratorProps(
+                                decoration: InputDecoration(
+                                    labelText: "Место прибытия",
+                                    contentPadding:
+                                        EdgeInsets.fromLTRB(12, 12, 0, 0),
+                                    border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(18))),
+                                    constraints: BoxConstraints(minHeight: 50)),
+                              ),
                               compareFn: (i, s) => i.isEqual(s),
                               selectedItem: points.firstWhere(
                                   (el) => el.id == pointB,
@@ -225,7 +240,16 @@ class Searchscreen extends State<SearchScreen> {
                         Expanded(
                           child: DropdownSearch<TransportingMeans>(
                               items: (f, cs) => means,
-                              decoratorProps: dropStyle,
+                              decoratorProps: DropDownDecoratorProps(
+                                decoration: InputDecoration(
+                                    labelText: "Транспорт",
+                                    contentPadding:
+                                        EdgeInsets.fromLTRB(12, 12, 0, 0),
+                                    border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(18))),
+                                    constraints: BoxConstraints(minHeight: 50)),
+                              ),
                               compareFn: (i, s) => i.isEqual(s),
                               selectedItem: means.firstWhere(
                                   (el) => el.id == mean,

@@ -169,10 +169,10 @@ class _ListViewScreenState extends State<ListViewScreen> {
     var hours = diff.inHours - diff.inDays * 24;
 
     if (diff.inDays != 0) {
-      time += "${diff.inDays} Дней ";
+      time += "${diff.inDays} ${ServerAPI.russianDays(diff.inDays)}";
     }
     if (hours != 0) {
-      time += "$hours Часов";
+      time += "$hours ${ServerAPI.russianHours(hours)}";
     }
 
     Navigator.push(
@@ -180,79 +180,75 @@ class _ListViewScreenState extends State<ListViewScreen> {
       MaterialPageRoute(builder: (BuildContext bc) {
         return StatefulBuilder(
             builder: (BuildContext context, StateSetter setModalState) {
+          // DateFormat('dd.MM.yyyy HH:mm').format(transport.start)
           return Scaffold(
-              appBar: AppBar(title: const Text('О транспорте')),
-              body: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Center(
-                    child: ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: 450),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text('Маршрут: ${transport.name}'),
-                            Row(
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.all(2),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                          width: 2,
-                                          color: const Color.fromARGB(
-                                              255, 0, 189, 183)),
-                                      color:
-                                          Color.fromARGB(255, 154, 255, 252)),
-                                  child: Text(transport.startPoint),
-                                ),
-                                Expanded(child: Divider()),
-                                Container(
-                                  padding: EdgeInsets.all(2),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                          width: 2,
-                                          color: const Color.fromARGB(
-                                              255, 254, 215, 102)),
-                                      color:
-                                          Color.fromARGB(255, 255, 248, 225)),
-                                  child: Text(
-                                    transport.endPoint,
-                                    textAlign: TextAlign.right,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Chip(
-                                    label: Text(DateFormat('dd.MM.yyyy HH:mm')
-                                        .format(transport.start))),
-                                Expanded(
-                                  child: Divider(),
-                                ),
-                                Chip(
-                                    label: Text(
-                                  DateFormat('dd.MM.yyyy HH:mm')
-                                      .format(transport.end),
-                                ))
-                              ],
-                            ),
-                            Text('Приблизительное время поездки: $time'),
-                            Text(
-                                'Выполняется компанией ${transport.company}\nОсуществляется перевозка ${transport.mean}'),
-                            Chip(
-                                label: Text(
-                                    "${transport.freeSpaceCount}/${transport.spaceCount} мест свободны")),
-                            ElevatedButton(
-                              onPressed: () {
-                                openBookingMenu(context, transport.id);
-                              },
-                              child: const Text('Забронировать'),
-                            ),
-                          ],
-                        )),
-                  )));
+            appBar: AppBar(title: const Text('О транспорте')),
+            body: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: 450),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Text('Маршрут: ${transport.name}'),
+                    ),
+                    SizedBox(
+                      height: 36,
+                    ),
+                    Row(
+                      children: [
+                        Text(transport.startPoint),
+                        Spacer(),
+                        Text(
+                          transport.endPoint,
+                          textAlign: TextAlign.right,
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 32),
+                      child: Divider(),
+                    ),
+                    Row(
+                      children: [
+                        Text(DateFormat('dd.MM.yyyy HH:mm')
+                            .format(transport.start)),
+                        Expanded(
+                          child: Divider(),
+                        ),
+                        Text(
+                          DateFormat('dd.MM.yyyy HH:mm').format(transport.end),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: 32,
+                    ),
+                    Text('Время поездки: $time'),
+                    Text('Исполняется ${transport.company}'),
+                    Text("Тип перевозки: ${transport.mean}"),
+                    Text(
+                        "Наличие мест: свободно ${transport.freeSpaceCount}/${transport.spaceCount}"),
+                    Spacer(),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              openBookingMenu(context, transport.id);
+                            },
+                            child: const Text('Забронировать'),
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
         });
       }),
     );
@@ -277,158 +273,156 @@ class _ListViewScreenState extends State<ListViewScreen> {
   }
 
   void openBookingMenu(context1, idx) {
-    showDialog(
-        context: context1,
-        builder: (BuildContext bc) {
-          return StatefulBuilder(
-              builder: (BuildContext context, StateSetter setModalState) {
-            return SafeArea(
+    Navigator.push(
+      context1,
+      MaterialPageRoute(builder: (BuildContext bc) {
+        return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setModalState) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Бронирование')),
+            body: Container(
+              padding: EdgeInsets.all(0),
               child: Container(
-                padding: EdgeInsets.all(0),
-                child: Dialog(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10))),
-                  child: Container(
-                    padding: EdgeInsets.all(15),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          Text("Введите ваши данные"),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Фамилия"),
-                              TextFormField(
-                                  decoration: InputDecoration.collapsed(
-                                      hintText: 'Фамилия'),
-                                  controller: mysurnameController,
-                                  validator: nameTest),
-                            ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Имя"),
-                              TextFormField(
-                                  decoration: InputDecoration.collapsed(
-                                      hintText: 'Имя'),
-                                  controller: mynameController,
-                                  validator: nameTest),
-                            ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Отчество"),
-                              TextFormField(
-                                  decoration: InputDecoration.collapsed(
-                                      hintText: 'Отчество'),
-                                  controller: mymidnameController,
-                                  validator: nameTest),
-                            ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Паспорт"),
-                              TextFormField(
-                                keyboardType: TextInputType.number,
-                                decoration: InputDecoration.collapsed(
-                                    hintText: 'Паспорт'),
-                                controller: mypassController,
-                                validator: (value) {
-                                  if (value == null ||
-                                      value.isEmpty ||
-                                      value.length < 11) {
-                                    return 'Please enter some text';
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Телефон"),
-                              TextFormField(
-                                keyboardType: TextInputType.phone,
-                                decoration: InputDecoration.collapsed(
-                                    hintText: 'Телефон'),
-                                controller: myphoneController,
-                                validator: (value) {
-                                  if (value == null ||
-                                      value.isEmpty ||
-                                      value.length < 17) {
-                                    return 'Введите правильный телефон';
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Эл. почта"),
-                              TextFormField(
-                                keyboardType: TextInputType.emailAddress,
-                                decoration: InputDecoration.collapsed(
-                                    hintText: 'Эл. почта'),
-                                controller: myMailController,
-                                // The validator receives the text that the user has entered.
-                                validator: (value) {
-                                  var re = RegExp(
-                                      r'^([A-Za-z0-9.]{1,50})@([A-Za-z0-9.]{1,50})\.([A-Za-z0-9.]{1,5})$');
-                                  if (value == null ||
-                                      value.isEmpty ||
-                                      !re.hasMatch(value)) {
-                                    return 'Введите правильный эл. адрес';
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ],
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                try {
-                                  ServerAPI.book(
-                                      idx,
-                                      mynameController.text,
-                                      mysurnameController.text,
-                                      mymidnameController.text,
-                                      myMailController.text,
-                                      int.parse(mypassController.unmasked),
-                                      int.parse(myphoneController.unmasked));
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('Принято!')),
-                                  );
-                                } catch (asd) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text(
-                                            'Не забронировано из-за соединения с сетью!')),
-                                  );
-                                }
-
-                                Navigator.of(context).pop();
-                                Navigator.of(context1).pop();
+                padding: EdgeInsets.all(15),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      Text("Введите ваши данные"),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Фамилия"),
+                          TextFormField(
+                              decoration: InputDecoration.collapsed(
+                                  hintText: 'Фамилия'),
+                              controller: mysurnameController,
+                              validator: nameTest),
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Имя"),
+                          TextFormField(
+                              decoration:
+                                  InputDecoration.collapsed(hintText: 'Имя'),
+                              controller: mynameController,
+                              validator: nameTest),
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Отчество"),
+                          TextFormField(
+                              decoration: InputDecoration.collapsed(
+                                  hintText: 'Отчество'),
+                              controller: mymidnameController,
+                              validator: nameTest),
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Паспорт"),
+                          TextFormField(
+                            keyboardType: TextInputType.number,
+                            decoration:
+                                InputDecoration.collapsed(hintText: 'Паспорт'),
+                            controller: mypassController,
+                            validator: (value) {
+                              if (value == null ||
+                                  value.isEmpty ||
+                                  value.length < 11) {
+                                return 'Please enter some text';
                               }
+                              return null;
                             },
-                            child: const Text('Забронировать билет'),
                           ),
                         ],
                       ),
-                    ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Телефон"),
+                          TextFormField(
+                            keyboardType: TextInputType.phone,
+                            decoration:
+                                InputDecoration.collapsed(hintText: 'Телефон'),
+                            controller: myphoneController,
+                            validator: (value) {
+                              if (value == null ||
+                                  value.isEmpty ||
+                                  value.length < 17) {
+                                return 'Введите правильный телефон';
+                              }
+                              return null;
+                            },
+                          ),
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Эл. почта"),
+                          TextFormField(
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: InputDecoration.collapsed(
+                                hintText: 'Эл. почта'),
+                            controller: myMailController,
+                            // The validator receives the text that the user has entered.
+                            validator: (value) {
+                              var re = RegExp(
+                                  r'^([A-Za-z0-9.]{1,50})@([A-Za-z0-9.]{1,50})\.([A-Za-z0-9.]{1,5})$');
+                              if (value == null ||
+                                  value.isEmpty ||
+                                  !re.hasMatch(value)) {
+                                return 'Введите правильный эл. адрес';
+                              }
+                              return null;
+                            },
+                          ),
+                        ],
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            try {
+                              ServerAPI.book(
+                                  idx,
+                                  mynameController.text,
+                                  mysurnameController.text,
+                                  mymidnameController.text,
+                                  myMailController.text,
+                                  int.parse(mypassController.unmasked),
+                                  int.parse(myphoneController.unmasked));
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Принято!')),
+                              );
+                            } catch (asd) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text(
+                                        'Не забронировано из-за соединения с сетью!')),
+                              );
+                            }
+
+                            Navigator.of(context).pop();
+                            Navigator.of(context1).pop();
+                          }
+                        },
+                        child: const Text('Забронировать билет'),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            );
-          });
+            ),
+          );
         });
+      }),
+    );
   }
 }
