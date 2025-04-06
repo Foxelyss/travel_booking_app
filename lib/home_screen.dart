@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({super.key, required this.onA, required this.onB});
+
+  final Function onA;
+  final Function onB;
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +16,11 @@ class HomeScreen extends StatelessWidget {
             spacing: 12,
             children: <Widget>[
               Card(
-                child: Padding(
+                child: InkWell(
+                  onTap: () {
+                    onA();
+                  },
+                  child: Padding(
                     padding: EdgeInsets.all(8),
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,47 +56,56 @@ class HomeScreen extends StatelessWidget {
                               ),
                             ],
                           ),
-                        ])),
+                        ]),
+                  ),
+                ),
               ),
               Card(
-                child: Padding(
+                child: InkWell(
+                  onTap: () {
+                    onB();
+                  },
+                  child: Padding(
                     padding: EdgeInsets.all(8),
                     child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            width: 320,
-                            child: ClipRRect(
-                                borderRadius: BorderRadius.circular(8.0),
-                                child:
-                                    Image(image: AssetImage('assets/ad2.png'))),
-                          ),
-                          SizedBox(
-                            height: 12,
-                          ),
-                          Text("Почему бы и не побывать в Великом Ханстве!"),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Text.rich(
-                                textAlign: TextAlign.end,
-                                TextSpan(
-                                  text: "",
-                                  children: <TextSpan>[
-                                    TextSpan(
-                                      text: "Поедьте в ",
-                                    ),
-                                    TextSpan(
-                                        text: "Казань!",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold)),
-                                  ],
-                                ),
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: 320,
+                          child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8.0),
+                              child:
+                                  Image(image: AssetImage('assets/ad2.png'))),
+                        ),
+                        SizedBox(
+                          height: 12,
+                        ),
+                        Text("Почему бы и не побывать в Великом Ханстве!"),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text.rich(
+                              textAlign: TextAlign.end,
+                              TextSpan(
+                                text: "",
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: "Поедьте в ",
+                                  ),
+                                  TextSpan(
+                                      text: "Казань!",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                ],
                               ),
-                            ],
-                          ),
-                        ])),
-              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              )
             ]),
       )),
     );

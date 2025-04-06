@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       title: 'Пассажирские перевозки',
       theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color.fromARGB(255, 255, 255, 255)),
+              seedColor: const Color.fromARGB(255, 105, 255, 205)),
           useMaterial3: true,
           appBarTheme: AppBarTheme(centerTitle: false),
           buttonTheme: ButtonThemeData(
@@ -87,9 +87,36 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = <Widget>[
-    HomeScreen(),
-    SearchScreen(title: "Поиск"),
+  final key = new GlobalKey<Searchscreen>();
+  void toFindA() {
+    setState(() {
+      _selectedIndex = 1;
+    });
+
+    key.currentState!.selectDestination(8, "г. Горно-Алтайск");
+  }
+
+  void toFindB() {
+    setState(() {
+      _selectedIndex = 1;
+    });
+
+    key.currentState!.selectDestination(3, "Казань");
+  }
+
+  late Function a;
+  late Function b;
+  _MyHomePageState() {
+    a = toFindA;
+    b = toFindB;
+  }
+
+  late final List<Widget> _pages = <Widget>[
+    HomeScreen(
+      onA: a,
+      onB: b,
+    ),
+    SearchScreen(key: key, title: "Поиск"),
     ProfileScreen(),
   ];
 

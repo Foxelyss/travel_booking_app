@@ -306,4 +306,10 @@ class Searchscreen extends State<SearchScreen> {
 
     return a;
   }
+
+  void selectDestination(int id, String name) {
+    pointA = id;
+    pointAStr = name;
+    openSearchMenu(context);
+  }
 }
