@@ -30,11 +30,15 @@ class Searchscreen extends State<SearchScreen> {
   DateTime? selectedDate;
 
   Future<void> getPoints() async {
-    points = await ServerAPI.getPoints();
+    if (points.isEmpty) {
+      points = await ServerAPI.getPoints();
+    }
   }
 
   Future<void> getMeans() async {
-    means = await ServerAPI.getMeans();
+    if (means.isEmpty) {
+      means = await ServerAPI.getMeans();
+    }
   }
 
   @override
