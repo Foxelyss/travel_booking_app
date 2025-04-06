@@ -356,10 +356,14 @@ class _ListViewScreenState extends State<ListViewScreen> {
   final myphoneController = MaskedTextController(mask: '8 (000) 000 00-00');
   final myMailController = TextEditingController();
 
-  String? nameTest(value) {
+  String? nameTest(String? value) {
     var reg = RegExp(r'^ *[а-яА-Я]+ +[а-яА-Я]+(?: +[а-яА-Я]+)?$');
 
-    if (value == null || value.isEmpty || !reg.hasMatch(value)) {
+    if (value == null ||
+        value.isEmpty ||
+        value.length <= 120 ||
+        !reg.hasMatch(value)) {
+      print(value!.length);
       return 'Введите настоящие данные';
     }
 
