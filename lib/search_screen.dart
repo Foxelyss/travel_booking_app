@@ -117,10 +117,10 @@ class Searchscreen extends State<SearchScreen> {
       Point(id: -1, town: "", name: "Выберете город", region: "region");
   static TransportingMeans allTransportingMeans =
       TransportingMeans(id: -1, name: "Все виды транспорта");
-  void openSearchMenu(context) {
-    getPoints();
-    getMeans();
-    showModalBottomSheet(
+  void openSearchMenu(context) async {
+    await getPoints();
+    await getMeans();
+    await showModalBottomSheet(
         context: context,
         showDragHandle: true,
         isScrollControlled: true,
