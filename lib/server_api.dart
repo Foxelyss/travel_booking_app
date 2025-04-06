@@ -14,21 +14,31 @@ class ServerAPI {
 
   static Future<void> book(int transporting, String name, String surname,
       String middleName, String email, int passport, int phone) async {
-    http.Response response =
-        await http.post(Uri.http(serverURI, '/api/booking/book', {
-      "transporting": "$transporting",
-      "name": name,
-      "surname": surname,
-      "middle_name": middleName,
-      "email": email,
-      "passport": "$passport",
-      "phone": "$phone"
-    }));
+    try {
+      http.Response response =
+          await http.post(Uri.http(serverURI, '/api/booking/book', {
+        "transporting": "$transporting",
+        "name": name,
+        "surname": surname,
+        "middle_name": middleName,
+        "email": email,
+        "passport": "$passport",
+        "phone": "$phone"
+      }));
 
-    if (response.statusCode == 200) {
-      print(response.body);
-    } else {
-      throw Exception(response.body);
+      if (response.statusCode == 200) {
+        print(response.body);
+      } else {
+        throw Exception(response.body);
+      }
+    } on SocketException {
+      throw Exception(noConnectionError);
+    } on HttpException {
+      rethrow;
+    } on http.ClientException {
+      throw Exception(noConnectionError);
+    } on Exception {
+      rethrow;
     }
   }
 

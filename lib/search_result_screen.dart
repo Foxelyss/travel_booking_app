@@ -357,10 +357,10 @@ class _ListViewScreenState extends State<ListViewScreen> {
   final myMailController = TextEditingController();
 
   String? nameTest(value) {
-    var reg = RegExp(r'^\h*[а-яА-Я]+\h+[а-яА-Я]+(?:\h+[а-яА-Я]+)?$');
+    var reg = RegExp(r'^ *[а-яА-Я]+ +[а-яА-Я]+(?: +[а-яА-Я]+)?$');
 
-    if (value == null || !reg.hasMatch(value)) {
-      // return 'Введите настоящие данные';
+    if (value == null || value.isEmpty || !reg.hasMatch(value)) {
+      return 'Введите настоящие данные';
     }
 
     return null;
@@ -479,7 +479,7 @@ class _ListViewScreenState extends State<ListViewScreen> {
                                           content:
                                               Text("${msg.substring(11)}")),
                                     );
-                                  }
+                                  } catch (e) {}
                                 }
                               },
                               child: const Text('Забронировать билет'),
