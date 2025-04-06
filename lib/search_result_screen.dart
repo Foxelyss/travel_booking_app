@@ -442,7 +442,7 @@ class _ListViewScreenState extends State<ListViewScreen> {
                         children: [
                           Expanded(
                             child: FilledButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 if (_formKey.currentState!.validate()) {
                                   try {
                                     String name = "";
@@ -458,7 +458,7 @@ class _ListViewScreenState extends State<ListViewScreen> {
                                       middle_name = strings[2];
                                     } catch (e) {}
 
-                                    ServerAPI.book(
+                                    await ServerAPI.book(
                                         idx,
                                         name,
                                         surname,
@@ -469,16 +469,17 @@ class _ListViewScreenState extends State<ListViewScreen> {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(content: Text('Принято!')),
                                     );
-                                  } catch (asd) {
+
+                                    Navigator.of(context).pop();
+                                    Navigator.of(context1).pop();
+                                  } on Exception catch (asd) {
+                                    var msg = asd.toString();
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content: Text(
-                                              'Не забронировано из-за соединения с сетью!')),
+                                      SnackBar(
+                                          content:
+                                              Text("${msg.substring(11)}")),
                                     );
                                   }
-
-                                  Navigator.of(context).pop();
-                                  Navigator.of(context1).pop();
                                 }
                               },
                               child: const Text('Забронировать билет'),
