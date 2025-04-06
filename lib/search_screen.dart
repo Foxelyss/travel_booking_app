@@ -31,13 +31,17 @@ class Searchscreen extends State<SearchScreen> {
 
   Future<void> getPoints() async {
     if (points.isEmpty) {
-      points = await ServerAPI.getPoints();
+      try {
+        points = await ServerAPI.getPoints();
+      } catch (e) {}
     }
   }
 
   Future<void> getMeans() async {
     if (means.isEmpty) {
-      means = await ServerAPI.getMeans();
+      try {
+        means = await ServerAPI.getMeans();
+      } catch (e) {}
     }
   }
 
@@ -203,7 +207,13 @@ class Searchscreen extends State<SearchScreen> {
                             compareFn: (i, s) => i.isEqual(s),
                             selectedItem: selectedDeparture(),
                             popupProps: PopupProps.menu(
-                                showSearchBox: true, fit: FlexFit.loose),
+                                showSearchBox: true,
+                                fit: FlexFit.loose,
+                                menuProps: MenuProps(
+                                    margin: EdgeInsets.only(top: 12),
+                                    shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(12))))),
                             onChanged: (newValue) {
                               pointA = newValue?.id ?? -1;
                               pointAStr = newValue?.name ?? "Нет";
@@ -232,7 +242,13 @@ class Searchscreen extends State<SearchScreen> {
                               compareFn: (i, s) => i.isEqual(s),
                               selectedItem: selectedArrival(),
                               popupProps: PopupProps.menu(
-                                  showSearchBox: true, fit: FlexFit.loose),
+                                  showSearchBox: true,
+                                  fit: FlexFit.loose,
+                                  menuProps: MenuProps(
+                                      margin: EdgeInsets.only(top: 12),
+                                      shape: const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(12))))),
                               onChanged: (newValue) {
                                 pointB = newValue?.id ?? -1;
                                 pointBStr = newValue?.name ?? "Нет";
@@ -246,25 +262,38 @@ class Searchscreen extends State<SearchScreen> {
                       children: [
                         Expanded(
                           child: DropdownSearch<TransportingMeans>(
-                              items: (f, cs) => means,
-                              decoratorProps: DropDownDecoratorProps(
-                                decoration: InputDecoration(
-                                    labelText: "Транспорт",
-                                    contentPadding:
-                                        EdgeInsets.fromLTRB(12, 12, 0, 0),
-                                    border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(18))),
-                                    constraints: BoxConstraints(minHeight: 50)),
+                            clickProps: ClickProps(
+                                customBorder: CircleBorder(),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(12))),
+                            items: (f, cs) => means,
+                            decoratorProps: DropDownDecoratorProps(
+                              decoration: InputDecoration(
+                                  labelText: "Транспорт",
+                                  contentPadding:
+                                      EdgeInsets.fromLTRB(12, 12, 0, 0),
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(18))),
+                                  constraints: BoxConstraints(minHeight: 50)),
+                            ),
+                            compareFn: (i, s) => i.isEqual(s),
+                            selectedItem: selectedMean(),
+                            popupProps: PopupProps.menu(
+                              fit: FlexFit.loose,
+                              menuProps: MenuProps(
+                                margin: EdgeInsets.only(top: 12),
+                                shape: const RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(12))),
                               ),
-                              compareFn: (i, s) => i.isEqual(s),
-                              selectedItem: selectedMean(),
-                              popupProps: PopupProps.menu(fit: FlexFit.loose),
-                              onChanged: (newValue) {
-                                setModalState(() {
-                                  mean = newValue?.id ?? -1;
-                                });
-                              }),
+                            ),
+                            onChanged: (newValue) {
+                              setModalState(() {
+                                mean = newValue?.id ?? -1;
+                              });
+                            },
+                          ),
                         )
                       ],
                     ),

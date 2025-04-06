@@ -310,8 +310,8 @@ class ProfileScreen extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(
-              height: 30,
+            ConstrainedBox(
+              constraints: BoxConstraints(minHeight: 15, maxHeight: 30),
             ),
             Text(
               "Управление",
