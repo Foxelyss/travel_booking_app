@@ -99,7 +99,34 @@ class ProfileScreen extends StatelessWidget {
         child: Column(
           spacing: 10,
           children: [
-            Text(obj.mean),
+            Text.rich(
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16),
+              TextSpan(
+                text: "",
+                children: <TextSpan>[
+                  TextSpan(
+                      text: "Маршрут: ",
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  TextSpan(
+                    text: "${obj.name}\n",
+                  ),
+                  TextSpan(
+                      text: "Компании: ",
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  TextSpan(
+                    text: "${obj.company}\n",
+                  ),
+                ],
+              ),
+            ),
+            Row(
+              children: [
+                Text(obj.startPoint),
+                Expanded(child: Divider()),
+                Text(obj.endPoint),
+              ],
+            ),
             Row(
               children: [
                 Text.rich(
@@ -138,10 +165,8 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ],
             ),
-            Text(obj.company),
-            Divider(
-              height: 6,
-            ),
+            Text(obj.mean),
+            Divider(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -178,37 +203,52 @@ class ProfileScreen extends StatelessWidget {
         context: context,
         builder: (BuildContext bc) {
           return SizedBox(
-            height: MediaQuery.of(context).size.height * 0.3,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                TextButton(
-                    onPressed: () {
-                      _offers.removeAt(_offers.indexWhere((a) => a.id == id));
-                      try {
-                        (() async {
-                          returnbook(transporting, id);
-                        }).withRetries(3);
+              height: MediaQuery.of(context).size.height * 0.2,
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Text(
+                      "Вы уверены?",
+                      textAlign: TextAlign.start,
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: FilledButton(
+                              onPressed: () {
+                                _offers.removeAt(
+                                    _offers.indexWhere((a) => a.id == id));
+                                try {
+                                  (() async {
+                                    returnbook(transporting, id);
+                                  }).withRetries(3);
 
-                        try {
-                          _offers
-                              .removeAt(_offers.indexWhere((a) => a.id == id));
-                        } catch (a) {
-                          ();
-                        }
-                      } catch (q) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Проблема с сервисом!')),
-                        );
-                      }
-                      stateSetter(() {
-                        Navigator.of(context).pop();
-                      });
-                    },
-                    child: Text("Подтвердить!")),
-              ],
-            ),
-          );
+                                  try {
+                                    _offers.removeAt(
+                                        _offers.indexWhere((a) => a.id == id));
+                                  } catch (a) {
+                                    ();
+                                  }
+                                } catch (q) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text('Проблема с сервисом!')),
+                                  );
+                                }
+                                stateSetter(() {
+                                  Navigator.of(context).pop();
+                                });
+                              },
+                              child: Text("Подтвердить!")),
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              ));
         });
   }
 
