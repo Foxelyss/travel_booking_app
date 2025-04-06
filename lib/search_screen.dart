@@ -65,7 +65,9 @@ class Searchscreen extends State<SearchScreen> {
             pointA: pointA,
             pointB: pointB,
             mean: mean,
-            wantedTime: 0,
+            wantedTime: selectedDate != null
+                ? selectedDate!.millisecondsSinceEpoch ~/ 1000
+                : 0,
           ))
         ],
       ),
@@ -160,7 +162,7 @@ class Searchscreen extends State<SearchScreen> {
                                   selectedDate = pickedDate;
                                 });
                               },
-                                  currentTime: DateTime.now(),
+                                  currentTime: selectedDate ?? DateTime.now(),
                                   locale: LocaleType.ru);
                             },
                             label: Text(
