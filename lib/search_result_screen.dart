@@ -366,6 +366,12 @@ class _ListViewScreenState extends State<ListViewScreen> {
       return 'Введите настоящие данные';
     }
 
+    List<String> strings = value.replaceAll(RegExp(r"\s+"), " ").split(" ");
+    if (strings.length >= 2) {
+      if (strings[0] == strings[1]) {
+        return "Фамилия и Имя не могут быть одинаковыми";
+      }
+    }
     return null;
   }
 
@@ -404,7 +410,7 @@ class _ListViewScreenState extends State<ListViewScreen> {
                           if (value == null ||
                               value.isEmpty ||
                               value.length < 11) {
-                            return 'Please enter some text';
+                            return 'Введите полные данные паспорта';
                           }
                           return null;
                         },
@@ -452,8 +458,9 @@ class _ListViewScreenState extends State<ListViewScreen> {
                                     String surname = "";
                                     String middle_name = " ";
 
-                                    var strings =
-                                        mysurnameController.text.split(" ");
+                                    var strings = mysurnameController.text
+                                        .replaceAll(RegExp(r"\s+"), " ")
+                                        .split(" ");
 
                                     surname = strings[0];
                                     name = strings[1];
