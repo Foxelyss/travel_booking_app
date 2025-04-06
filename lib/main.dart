@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:travel_booking_app/home_screen.dart';
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
       title: 'Пассажирские перевозки',
       theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color.fromARGB(255, 226, 223, 24)),
+              seedColor: const Color.fromARGB(255, 255, 255, 255)),
           useMaterial3: true,
           appBarTheme: AppBarTheme(centerTitle: false),
           buttonTheme: ButtonThemeData(
@@ -46,6 +47,15 @@ class MyApp extends StatelessWidget {
                             color: const Color.fromARGB(255, 212, 212, 212))))),
           ),
           textButtonTheme: TextButtonThemeData(
+            style: ButtonStyle(
+                minimumSize: WidgetStateProperty.all<Size>(Size(80, 50)),
+                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        side: BorderSide(
+                            color: const Color.fromARGB(255, 212, 212, 212))))),
+          ),
+          filledButtonTheme: FilledButtonThemeData(
             style: ButtonStyle(
                 minimumSize: WidgetStateProperty.all<Size>(Size(80, 50)),
                 shape: WidgetStateProperty.all<RoundedRectangleBorder>(
@@ -87,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Colors.white70,
         title: Text([
           "Специальные предложения",
           "Поиск",
@@ -102,15 +112,26 @@ class _MyHomePageState extends State<MyHomePage> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(CupertinoIcons.house),
+            activeIcon: Icon(CupertinoIcons.house_fill),
             label: 'Главная',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search),
+            icon: Icon(
+              CupertinoIcons.search,
+            ),
+            activeIcon: Icon(
+              CupertinoIcons.search,
+              weight: 600,
+            ),
             label: 'Поиск',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(CupertinoIcons.person),
+            activeIcon: Icon(
+              CupertinoIcons.person_fill,
+              weight: 600,
+            ),
             label: 'Кабинет',
           ),
         ],

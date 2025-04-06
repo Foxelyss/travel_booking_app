@@ -125,7 +125,7 @@ class Searchscreen extends State<SearchScreen> {
                   maxHeight: 400,
                   minHeight: MediaQuery.of(context).size.height * 0.23),
               child: Padding(
-                padding: EdgeInsets.all(12),
+                padding: EdgeInsets.fromLTRB(12, 0, 12, 12),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [

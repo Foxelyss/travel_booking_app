@@ -359,8 +359,8 @@ class _ListViewScreenState extends State<ListViewScreen> {
   String? nameTest(value) {
     var reg = RegExp(r'^\h*[а-яА-Я]+\h+[а-яА-Я]+(?:\h+[а-яА-Я]+)?$');
 
-    if (value == null || value.isEmpty || !reg.hasMatch(value)) {
-      return 'Введите настоящие данные';
+    if (value == null || !reg.hasMatch(value)) {
+      // return 'Введите настоящие данные';
     }
 
     return null;
@@ -422,8 +422,8 @@ class _ListViewScreenState extends State<ListViewScreen> {
                       ),
                       TextFormField(
                         keyboardType: TextInputType.emailAddress,
-                        decoration:
-                            InputDecoration(hintText: 'E-mail', border: border),
+                        decoration: InputDecoration(
+                            labelText: 'E-mail', border: border),
                         controller: myMailController,
                         // The validator receives the text that the user has entered.
                         validator: (value) {
@@ -441,13 +441,13 @@ class _ListViewScreenState extends State<ListViewScreen> {
                       Row(
                         children: [
                           Expanded(
-                            child: ElevatedButton(
+                            child: FilledButton(
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
                                   try {
                                     String name = "";
                                     String surname = "";
-                                    String middle_name = "";
+                                    String middle_name = " ";
 
                                     var strings =
                                         mysurnameController.text.split(" ");

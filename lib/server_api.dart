@@ -26,6 +26,7 @@ class ServerAPI {
     }));
 
     if (response.statusCode == 200) {
+      print(response.body);
     } else {
       throw Exception('Error');
     }

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
@@ -38,7 +39,7 @@ class CustomFirstPageError extends StatelessWidget {
               width: 250,
               child: ElevatedButton.icon(
                 onPressed: pagingController.refresh,
-                icon: const Icon(Icons.refresh),
+                icon: const Icon(CupertinoIcons.refresh),
                 label: const Text(
                   'Попробовать ещё',
                   style: TextStyle(

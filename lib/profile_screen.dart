@@ -1,12 +1,15 @@
 import 'dart:convert';
 
 import 'package:extended_masked_text/extended_masked_text.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'dart:async';
 import 'package:travel_booking_app/config.dart';
+import 'package:travel_booking_app/server_api.dart';
+import 'package:travel_booking_app/ticket.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -14,7 +17,7 @@ class ProfileScreen extends StatelessWidget {
   static final _formKey = GlobalKey<FormState>();
   static var myEmailController = TextEditingController();
   static var mypassController = MaskedTextController(mask: '0000 000000');
-  static List<dynamic> _offers = <dynamic>[];
+  static List<Ticket> _offers = <Ticket>[];
 
   Future<void> getbookings() async {
     http.Response response =
@@ -29,7 +32,7 @@ class ProfileScreen extends StatelessWidget {
       throw Exception('Error');
     }
 
-    _offers = jsonDecode(utf8.decode(response.bodyBytes)) as List;
+    _offers = Ticket.fromJsonList(jsonDecode(utf8.decode(response.bodyBytes)));
   }
 
   Future<void> returnbook(transporting, id) async {
@@ -63,6 +66,7 @@ class ProfileScreen extends StatelessWidget {
                   constraints: BoxConstraints(maxWidth: 450),
                   child: ListView.builder(
                     itemCount: _offers.length,
+                    padding: EdgeInsets.symmetric(horizontal: 16),
                     itemBuilder: (context, index) {
                       return createTransporting(
                           context, _offers[index], setModalState);
@@ -77,52 +81,94 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget createTransporting(context, obj, StateSetter modalSetter) {
-    return Container(
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(width: 2, color: Colors.white),
-          color: Color.fromARGB(255, 219, 219, 219)),
-      child: Column(
-        children: [
-          Text("Маршрут: ${obj["name"]} Компании ${obj["companyName"]}"),
-          Divider(),
-          Text(
-              "На время: ${DateFormat('dd.MM.yyyy HH:mm').format(DateTime.parse(obj["departure"]))}"),
-          Divider(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text("${obj["startPoint"]}"),
-              Text("➤"),
-              Text("${obj["endPoint"]}")
-            ],
-          ),
-          Divider(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text("№ чека ${obj["id"]}"),
-              TextButton(
-                  onPressed: DateTime.now()
-                              .difference(DateTime.parse(obj["departure"]))
-                              .inSeconds <=
-                          0
-                      ? () {
-                          returnBook(context, obj["transporting"], obj["id"],
-                              modalSetter);
+  Widget createTransporting(context, Ticket obj, StateSetter modalSetter) {
+    var time = "";
+    var diff = obj.end.difference(obj.start);
+    var hours = diff.inHours - diff.inDays * 24;
 
-                          getbookings();
+    if (diff.inDays != 0) {
+      time += "${diff.inDays} ${ServerAPI.russianDays(diff.inDays)}";
+    }
+    if (hours != 0) {
+      time += "$hours ${ServerAPI.russianHours(hours)}";
+    }
 
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Обновление данных!')),
-                          );
-                        }
-                      : null,
-                  child: Text("Отказаться"))
-            ],
-          ),
-        ],
+    return Card(
+      child: Container(
+        padding: EdgeInsets.all(9),
+        child: Column(
+          spacing: 10,
+          children: [
+            Text(obj.mean),
+            Row(
+              children: [
+                Text.rich(
+                  TextSpan(
+                    text: "",
+                    children: <TextSpan>[
+                      TextSpan(
+                          text: DateFormat('dd.MM.yyyy\n').format(obj.start),
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextSpan(
+                        text: DateFormat('HH:mm').format(obj.start),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Row(children: <Widget>[
+                    Expanded(child: Divider()),
+                    Text("   $time   "),
+                    Expanded(child: Divider()),
+                  ]),
+                ),
+                Text.rich(
+                  textAlign: TextAlign.end,
+                  TextSpan(
+                    text: "",
+                    children: <TextSpan>[
+                      TextSpan(
+                          text: DateFormat('dd.MM.yyyy\n').format(obj.end),
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextSpan(
+                        text: DateFormat('HH:mm').format(obj.end),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            Text(obj.company),
+            Divider(
+              height: 6,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("№ чека ${obj.id}"),
+                TextButton(
+                    onPressed: DateTime.now().difference(obj.start).inSeconds <=
+                            0
+                        ? () {
+                            returnBook(
+                                context, obj.transporting, obj.id, modalSetter);
+
+                            getbookings();
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text('Обновление данных!')),
+                            );
+                          }
+                        : null,
+                    style: TextButton.styleFrom(
+                        foregroundColor: Colors.pink,
+                        side: BorderSide(style: BorderStyle.none)),
+                    child: Text("Отказаться"))
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -138,16 +184,15 @@ class ProfileScreen extends StatelessWidget {
               children: [
                 TextButton(
                     onPressed: () {
-                      _offers
-                          .removeAt(_offers.indexWhere((a) => a["id"] == id));
+                      _offers.removeAt(_offers.indexWhere((a) => a.id == id));
                       try {
                         (() async {
                           returnbook(transporting, id);
                         }).withRetries(3);
 
                         try {
-                          _offers.removeAt(
-                              _offers.indexWhere((a) => a["id"] == id));
+                          _offers
+                              .removeAt(_offers.indexWhere((a) => a.id == id));
                         } catch (a) {
                           ();
                         }
@@ -239,7 +284,7 @@ class ProfileScreen extends StatelessWidget {
               children: [
                 Expanded(
                     child: ElevatedButton.icon(
-                  icon: Icon(Icons.receipt_long_rounded),
+                  icon: Icon(CupertinoIcons.tickets),
                   style: ButtonStyle(
                     alignment: Alignment.centerLeft,
                   ),
@@ -248,7 +293,7 @@ class ProfileScreen extends StatelessWidget {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Просмотр данных!')),
                       );
-
+                      getbookings();
                       try {
                         await getbookings.withRetries(3);
                       } catch (q) {
@@ -290,7 +335,7 @@ class ProfileScreen extends StatelessWidget {
                       SystemChannels.platform
                           .invokeMethod('SystemNavigator.pop');
                     },
-                    icon: Icon(Icons.logout_outlined),
+                    icon: Icon(Icons.logout_rounded),
                     style: ButtonStyle(
                       alignment: Alignment.centerLeft,
                       iconColor: WidgetStatePropertyAll(Colors.red),
