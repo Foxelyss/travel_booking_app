@@ -119,6 +119,7 @@ class Searchscreen extends State<SearchScreen> {
         builder: (BuildContext bc) {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setModalState) {
+            setModalState(() {});
             var date = selectedDate;
             return ConstrainedBox(
               constraints: BoxConstraints(
