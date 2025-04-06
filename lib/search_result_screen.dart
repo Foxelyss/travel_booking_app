@@ -361,9 +361,8 @@ class _ListViewScreenState extends State<ListViewScreen> {
 
     if (value == null ||
         value.isEmpty ||
-        value.length <= 120 ||
+        value.length >= 120 ||
         !reg.hasMatch(value)) {
-      print(value!.length);
       return 'Введите настоящие данные';
     }
 
