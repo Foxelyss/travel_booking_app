@@ -153,7 +153,8 @@ class _ListViewScreenState extends State<ListViewScreen> {
                 children: [
                   Text("${obj.freeSpaceCount}/${obj.spaceCount}",
                       style: const TextStyle(fontWeight: FontWeight.w300)),
-                  Text("${obj.price}₽",
+                  Text(
+                      "${obj.price.toStringAsFixed(2).replaceFirst(".", ",")} ₽",
                       style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 20)),
                 ],
