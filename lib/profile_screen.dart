@@ -218,6 +218,9 @@ class ProfileScreen extends StatelessWidget {
                       children: [
                         Expanded(
                           child: FilledButton(
+                              style: TextButton.styleFrom(
+                                  backgroundColor: Colors.pink,
+                                  side: BorderSide(style: BorderStyle.none)),
                               onPressed: () {
                                 _offers.removeAt(
                                     _offers.indexWhere((a) => a.id == id));
