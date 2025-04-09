@@ -120,6 +120,7 @@ class Searchscreen extends State<SearchScreen> {
   static TransportingMeans allTransportingMeans =
       TransportingMeans(id: -1, name: "Все виды транспорта");
   void openSearchMenu(context) async {
+    bool somethingChanged = false;
     await getPoints();
     await getMeans();
     await showModalBottomSheet(
@@ -161,6 +162,7 @@ class Searchscreen extends State<SearchScreen> {
                                 setModalState(() {
                                   selectedDate = pickedDate;
                                 });
+                                somethingChanged = true;
                               },
                                   currentTime: selectedDate ?? DateTime.now(),
                                   locale: LocaleType.ru);
@@ -187,6 +189,7 @@ class Searchscreen extends State<SearchScreen> {
 
                                 selectedDate = null;
                               });
+                              somethingChanged = true;
                             },
                             label: Text("Очистить")),
                       ],
@@ -219,6 +222,7 @@ class Searchscreen extends State<SearchScreen> {
                             onChanged: (newValue) {
                               pointA = newValue?.id ?? -1;
                               pointAStr = newValue?.name ?? "Нет";
+                              somethingChanged = true;
 
                               setModalState(() {});
                             },
@@ -256,6 +260,7 @@ class Searchscreen extends State<SearchScreen> {
                               onChanged: (newValue) {
                                 pointB = newValue?.id ?? -1;
                                 pointBStr = newValue?.name ?? "Нет";
+                                somethingChanged = true;
 
                                 setModalState(() {});
                               }),
@@ -293,6 +298,8 @@ class Searchscreen extends State<SearchScreen> {
                               ),
                             ),
                             onChanged: (newValue) {
+                              somethingChanged = true;
+
                               setModalState(() {
                                 mean = newValue?.id ?? -1;
                               });
@@ -307,7 +314,9 @@ class Searchscreen extends State<SearchScreen> {
             );
           });
         }).whenComplete(() {
-      setState(() {});
+      if (somethingChanged) {
+        setState(() {});
+      }
     });
   }
 

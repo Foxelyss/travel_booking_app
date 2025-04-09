@@ -54,20 +54,28 @@ class _ListViewScreenState extends State<ListViewScreen> {
   Widget build(BuildContext context) {
     return PagingListener(
       controller: _pagingController,
-      builder: (context, state, fetchNextPage) => PagedListView<int, Transport>(
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        state: state,
-        fetchNextPage: fetchNextPage,
-        builderDelegate: PagedChildBuilderDelegate(
-          itemBuilder: (context, item, index) => createTransporting(item),
-          firstPageErrorIndicatorBuilder: (context) =>
-              CustomFirstPageError(pagingController: _pagingController),
-          newPageErrorIndicatorBuilder: (context) =>
-              CustomNewPageError(pagingController: _pagingController),
-          noItemsFoundIndicatorBuilder: (context) => NoItemsFoundIndicator(),
-          noMoreItemsIndicatorBuilder: (context) => Divider(),
-        ),
-      ),
+      builder: (context, state, fetchNextPage) => RefreshIndicator(
+          onRefresh: () => Future.sync(
+                () {
+                  nextPage = true;
+                  _pagingController.refresh();
+                },
+              ),
+          child: PagedListView<int, Transport>(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            state: state,
+            fetchNextPage: fetchNextPage,
+            builderDelegate: PagedChildBuilderDelegate(
+              itemBuilder: (context, item, index) => createTransporting(item),
+              firstPageErrorIndicatorBuilder: (context) =>
+                  CustomFirstPageError(pagingController: _pagingController),
+              newPageErrorIndicatorBuilder: (context) =>
+                  CustomNewPageError(pagingController: _pagingController),
+              noItemsFoundIndicatorBuilder: (context) =>
+                  NoItemsFoundIndicator(),
+              noMoreItemsIndicatorBuilder: (context) => Divider(),
+            ),
+          )),
     );
   }
 
