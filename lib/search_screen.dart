@@ -246,6 +246,8 @@ class Searchscreen extends State<SearchScreen> {
                               popupProps: PopupProps.menu(
                                   showSearchBox: true,
                                   fit: FlexFit.loose,
+                                  disabledItemFn: (item) =>
+                                      pointB == -1 ? false : item.id == pointA,
                                   menuProps: MenuProps(
                                       margin: EdgeInsets.only(top: 12),
                                       shape: const RoundedRectangleBorder(

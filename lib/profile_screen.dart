@@ -171,6 +171,8 @@ class ProfileScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text("№ чека ${obj.id}"),
+                Text(
+                    "${obj.price.toStringAsFixed(2).replaceFirst(".", ",")} ₽"),
                 TextButton(
                     onPressed: DateTime.now().difference(obj.start).inSeconds <=
                             0
@@ -219,7 +221,7 @@ class ProfileScreen extends StatelessWidget {
                         Expanded(
                           child: FilledButton(
                               style: TextButton.styleFrom(
-                                  backgroundColor: Colors.pink,
+                                  backgroundColor: Colors.red,
                                   side: BorderSide(style: BorderStyle.none)),
                               onPressed: () {
                                 _offers.removeAt(
