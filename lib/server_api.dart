@@ -3,9 +3,10 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:travel_booking_app/config.dart';
-import 'package:travel_booking_app/point.dart';
-import 'package:travel_booking_app/transport.dart';
-import 'package:travel_booking_app/transporting_means.dart';
+import 'package:travel_booking_app/model/point.dart';
+import 'package:travel_booking_app/model/ticket.dart';
+import 'package:travel_booking_app/model/transport.dart';
+import 'package:travel_booking_app/model/transporting_means.dart';
 
 class ServerAPI {
   static final noConnectionError = "Невозможно подключиться к серверу";
@@ -98,6 +99,36 @@ class ServerAPI {
     var means = TransportingMeans.fromJsonList(meansJson);
     means.add(everythingTransportingMean);
     return means;
+  }
+
+  static Future<List<Ticket>> getbookings(email, passport) async {
+    http.Response response = await http.get(Uri.http(
+        serverURI,
+        '/api/booking/books',
+        {"transporting": '1', "email": email, "passport": passport}));
+
+    if (response.statusCode == 200) {
+    } else {
+      throw Exception('Error');
+    }
+
+    return Ticket.fromJsonList(jsonDecode(utf8.decode(response.bodyBytes)));
+  }
+
+  static Future<void> returnbook(transporting, id, email, passport) async {
+    http.Response response =
+        await http.post(Uri.http(serverURI, '/api/booking/return', {
+      "transporting": '$transporting',
+      "email": email,
+      'phone': '123',
+      "passport": passport,
+      'id': '$id'
+    }));
+
+    if (response.statusCode == 200) {
+    } else {
+      throw Exception('Error');
+    }
   }
 
   static String russianDays(int n) {

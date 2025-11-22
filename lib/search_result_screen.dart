@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:intl/intl.dart';
 import 'package:travel_booking_app/server_api.dart';
-import 'package:travel_booking_app/transport.dart';
-import 'package:travel_booking_app/pagination_errors.dart';
-import 'package:travel_booking_app/pagination_messages.dart';
+import 'package:travel_booking_app/model/transport.dart';
+import 'package:travel_booking_app/paginator/pagination_errors.dart';
+import 'package:travel_booking_app/paginator/pagination_messages.dart';
 
 class ListViewScreen extends StatefulWidget {
   final int pointA;
@@ -465,7 +465,7 @@ class _ListViewScreenState extends State<ListViewScreen> {
                                   try {
                                     String name = "";
                                     String surname = "";
-                                    String middle_name = " ";
+                                    String middleName = " ";
 
                                     var strings = mysurnameController.text
                                         .replaceAll(RegExp(r"\s+"), " ")
@@ -474,14 +474,14 @@ class _ListViewScreenState extends State<ListViewScreen> {
                                     surname = strings[0];
                                     name = strings[1];
                                     try {
-                                      middle_name = strings[2];
+                                      middleName = strings[2];
                                     } catch (e) {}
 
                                     await ServerAPI.book(
                                         idx,
                                         name,
                                         surname,
-                                        middle_name,
+                                        middleName,
                                         myMailController.text,
                                         int.parse(mypassController.unmasked),
                                         int.parse(myphoneController.unmasked));
@@ -496,9 +496,9 @@ class _ListViewScreenState extends State<ListViewScreen> {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                           content:
-                                              Text("${msg.substring(11)}")),
+                                              Text(msg.substring(11))),
                                     );
-                                  } catch (e) {}
+                                  }
                                 }
                               },
                               child: const Text('Забронировать билет'),

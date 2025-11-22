@@ -10,11 +10,6 @@ class Ticket {
   final String mean;
   final String company;
 
-// int id, String name, int transporting,
-//                          Timestamp start, Timestamp end, String startPoint,
-//                          String endPoint, float price,
-//                          String mean, String company,
-//                          String payment
   Ticket({
     required this.id,
     required this.transporting,

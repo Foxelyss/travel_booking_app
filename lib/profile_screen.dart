@@ -9,7 +9,7 @@ import 'package:intl/intl.dart';
 import 'dart:async';
 import 'package:travel_booking_app/config.dart';
 import 'package:travel_booking_app/server_api.dart';
-import 'package:travel_booking_app/ticket.dart';
+import 'package:travel_booking_app/model/ticket.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -21,7 +21,7 @@ class ProfileScreen extends StatelessWidget {
 
   Future<void> getbookings() async {
     http.Response response =
-        await http.get(Uri.http(serverURI, '/api/booking/books', {
+        await http.get(Uri.https(serverURI, '/api/booking/books', {
       "transporting": '1',
       "email": myEmailController.text,
       "passport": mypassController.text
@@ -37,7 +37,7 @@ class ProfileScreen extends StatelessWidget {
 
   Future<void> returnbook(transporting, id) async {
     http.Response response =
-        await http.post(Uri.http(serverURI, '/api/booking/return', {
+        await http.post(Uri.https(serverURI, '/api/booking/return', {
       "transporting": '$transporting',
       "email": myEmailController.text,
       'phone': '123',
