@@ -19,6 +19,11 @@ function(list_prepend LIST_NAME PREFIX)
     set(${LIST_NAME} "${NEW_LIST}" PARENT_SCOPE)
 endfunction()
 
+function(APPLY_STANDARD_SETTINGS TARGET)
+  # TODO: обновиться когда будет фикс компиляции flutter secure storage
+  target_compile_options(${TARGET} PRIVATE -Wno-deprecated)
+endfunction()
+
 # === Flutter Library ===
 # System-level dependencies.
 find_package(PkgConfig REQUIRED)

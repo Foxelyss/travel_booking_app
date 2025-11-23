@@ -6,9 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:secure_db/secure_db.dart';
 import 'dart:async';
 import 'package:travel_booking_app/config.dart';
-import 'package:travel_booking_app/server_api.dart';
+import 'package:travel_booking_app/login_page.dart';
+import 'package:travel_booking_app/server.dart';
 import 'package:travel_booking_app/model/ticket.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -18,22 +20,7 @@ class ProfileScreen extends StatelessWidget {
   static var myEmailController = TextEditingController();
   static var mypassController = MaskedTextController(mask: '0000 000000');
   static List<Ticket> _offers = <Ticket>[];
-
-  Future<void> getbookings() async {
-    http.Response response =
-        await http.get(Uri.https(serverURI, '/api/booking/books', {
-      "transporting": '1',
-      "email": myEmailController.text,
-      "passport": mypassController.text
-    }));
-
-    if (response.statusCode == 200) {
-    } else {
-      throw Exception('Error');
-    }
-
-    _offers = Ticket.fromJsonList(jsonDecode(utf8.decode(response.bodyBytes)));
-  }
+//  myEmailController.text,  mypassController.text
 
   Future<void> returnbook(transporting, id) async {
     http.Response response =
@@ -87,10 +74,10 @@ class ProfileScreen extends StatelessWidget {
     var hours = diff.inHours - diff.inDays * 24;
 
     if (diff.inDays != 0) {
-      time += "${diff.inDays} ${ServerAPI.russianDays(diff.inDays)}";
+      time += "${diff.inDays} ${Server.russianDays(diff.inDays)}";
     }
     if (hours != 0) {
-      time += "$hours ${ServerAPI.russianHours(hours)}";
+      time += "$hours ${Server.russianHours(hours)}";
     }
 
     return Card(
@@ -176,11 +163,12 @@ class ProfileScreen extends StatelessWidget {
                 TextButton(
                     onPressed: DateTime.now().difference(obj.start).inSeconds <=
                             0
-                        ? () {
+                        ? () async {
                             returnBook(
                                 context, obj.transporting, obj.id, modalSetter);
 
-                            getbookings();
+                            _offers = await Server.getbookings(
+                                myEmailController.text, mypassController.text);
 
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
@@ -338,9 +326,12 @@ class ProfileScreen extends StatelessWidget {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Просмотр данных!')),
                       );
-                      getbookings();
+                      Server.getbookings(
+                          myEmailController.text, mypassController.text);
                       try {
-                        await getbookings.withRetries(3);
+                        await (() => Server.getbookings(
+                                myEmailController.text, mypassController.text))
+                            .withRetries(3);
                       } catch (q) {
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -376,9 +367,19 @@ class ProfileScreen extends StatelessWidget {
               children: [
                 Expanded(
                   child: TextButton.icon(
-                    onPressed: () {
-                      SystemChannels.platform
-                          .invokeMethod('SystemNavigator.pop');
+                    onPressed: () async {
+                      await SecureDB.remove('access_token');
+
+                      // Reload app
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) =>
+                                new LoginPage(title: 'Пассажирские перевозки')),
+                      );
+
+                      // SystemChannels.platform
+                      //     .invokeMethod('SystemNavigator.pop');
                     },
                     icon: Icon(Icons.logout_rounded),
                     style: ButtonStyle(

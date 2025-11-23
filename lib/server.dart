@@ -2,16 +2,47 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:secure_db/secure_db.dart';
 import 'package:travel_booking_app/config.dart';
 import 'package:travel_booking_app/model/point.dart';
 import 'package:travel_booking_app/model/ticket.dart';
 import 'package:travel_booking_app/model/transport.dart';
 import 'package:travel_booking_app/model/transporting_means.dart';
 
-class ServerAPI {
+class Server {
   static final noConnectionError = "Невозможно подключиться к серверу";
   static TransportingMeans everythingTransportingMean =
       TransportingMeans(id: -1, name: "Все виды транспорта");
+
+  static String? token;
+
+  static Future<void> LoadAccessToken() async {
+    token = await SecureDB.getString('access_token');
+  }
+
+  static Future<bool> isLoggedIn() async {
+    await LoadAccessToken();
+
+    return token != null;
+  }
+
+  static Future<http.Response> command(
+      String path, Map<String, String>? params) async {
+    try {
+      http.Response response =
+          await http.post(Uri.http(serverURI, path, params));
+
+      return response;
+    } on SocketException {
+      throw Exception(noConnectionError);
+    } on HttpException {
+      rethrow;
+    } on http.ClientException {
+      throw Exception(noConnectionError);
+    } on Exception {
+      rethrow;
+    }
+  }
 
   static Future<void> book(int transporting, String name, String surname,
       String middleName, String email, int passport, int phone) async {

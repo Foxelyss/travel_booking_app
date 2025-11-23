@@ -2,7 +2,7 @@ import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:intl/intl.dart';
-import 'package:travel_booking_app/server_api.dart';
+import 'package:travel_booking_app/server.dart';
 import 'package:travel_booking_app/model/transport.dart';
 import 'package:travel_booking_app/paginator/pagination_errors.dart';
 import 'package:travel_booking_app/paginator/pagination_messages.dart';
@@ -80,7 +80,7 @@ class _ListViewScreenState extends State<ListViewScreen> {
   }
 
   Future<List<Transport>> searchTransport(int page) async {
-    var list = await ServerAPI.searchTransport(
+    var list = await Server.searchTransport(
         widget.pointA, widget.pointB, widget.wantedTime, widget.mean, page);
 
     if (list.isEmpty) {
@@ -96,10 +96,10 @@ class _ListViewScreenState extends State<ListViewScreen> {
     var hours = diff.inHours - diff.inDays * 24;
 
     if (diff.inDays != 0) {
-      time += "${diff.inDays} ${ServerAPI.russianDays(diff.inDays)}";
+      time += "${diff.inDays} ${Server.russianDays(diff.inDays)}";
     }
     if (hours != 0) {
-      time += "$hours ${ServerAPI.russianHours(hours)}";
+      time += "$hours ${Server.russianHours(hours)}";
     }
 
     return Card(
@@ -180,10 +180,10 @@ class _ListViewScreenState extends State<ListViewScreen> {
     var hours = diff.inHours - diff.inDays * 24;
 
     if (diff.inDays != 0) {
-      time += "${diff.inDays} ${ServerAPI.russianDays(diff.inDays)}";
+      time += "${diff.inDays} ${Server.russianDays(diff.inDays)}";
     }
     if (hours != 0) {
-      time += "$hours ${ServerAPI.russianHours(hours)}";
+      time += "$hours ${Server.russianHours(hours)}";
     }
 
     Navigator.push(
@@ -477,7 +477,7 @@ class _ListViewScreenState extends State<ListViewScreen> {
                                       middleName = strings[2];
                                     } catch (e) {}
 
-                                    await ServerAPI.book(
+                                    await Server.book(
                                         idx,
                                         name,
                                         surname,
@@ -495,8 +495,7 @@ class _ListViewScreenState extends State<ListViewScreen> {
                                     var msg = asd.toString();
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                          content:
-                                              Text(msg.substring(11))),
+                                          content: Text(msg.substring(11))),
                                     );
                                   }
                                 }

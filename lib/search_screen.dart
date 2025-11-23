@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'dart:async';
 import 'package:travel_booking_app/model/point.dart';
 import 'package:travel_booking_app/search_result_screen.dart';
-import 'package:travel_booking_app/server_api.dart';
+import 'package:travel_booking_app/server.dart';
 import 'package:travel_booking_app/model/transport.dart';
 import 'package:travel_booking_app/model/transporting_means.dart';
 
@@ -32,7 +32,7 @@ class Searchscreen extends State<SearchScreen> {
   Future<void> getPoints() async {
     if (points.isEmpty) {
       try {
-        points = await ServerAPI.getPoints();
+        points = await Server.getPoints();
       } catch (e) {}
     }
   }
@@ -40,7 +40,7 @@ class Searchscreen extends State<SearchScreen> {
   Future<void> getMeans() async {
     if (means.isEmpty) {
       try {
-        means = await ServerAPI.getMeans();
+        means = await Server.getMeans();
       } catch (e) {}
     }
   }
