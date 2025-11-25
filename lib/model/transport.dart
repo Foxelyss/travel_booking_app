@@ -1,14 +1,15 @@
+import 'package:travel_booking_app/model/point.dart';
+import 'package:travel_booking_app/model/transporting_means.dart';
+
 class Transport {
   final int id;
-  final String startPoint;
-  final String startPointTown;
-  final String endPoint;
-  final String endPointTown;
+  final Point startPoint;
+  final Point endPoint;
   final String name;
   final DateTime start;
   final DateTime end;
   final double price;
-  final String mean;
+  final List<TransportingMeans> mean;
   final String company;
   final int spaceCount;
   final int freeSpaceCount;
@@ -19,9 +20,7 @@ class Transport {
     required this.start,
     required this.end,
     required this.startPoint,
-    required this.startPointTown,
     required this.endPoint,
-    required this.endPointTown,
     required this.price,
     required this.mean,
     required this.company,
@@ -30,23 +29,18 @@ class Transport {
   });
 
   factory Transport.fromJson(Map<String, dynamic> json) {
-    List<String> a = (json["startPoint"] as String).split("|");
-    List<String> b = (json["endPoint"] as String).split("|");
-
     return Transport(
         id: json["id"],
         name: json["name"],
-        start: DateTime.parse(json["start"]),
-        end: DateTime.parse(json["end"]),
-        startPoint: a[0],
-        startPointTown: a[1],
-        endPoint: b[0],
-        endPointTown: b[1],
+        start: DateTime.parse(json["departure"]),
+        end: DateTime.parse(json["arrival"]),
+        startPoint: Point.fromJson(json["departurePoint"]),
+        endPoint: Point.fromJson(json["arrivalPoint"]),
         price: json["price"],
-        mean: json["mean"],
-        company: json["company"],
-        spaceCount: json["places"],
-        freeSpaceCount: json["freePlaceQuantity"]);
+        mean: TransportingMeans.fromJsonList(json["transportingMeans"]),
+        company: json["companyName"],
+        spaceCount: json["placeCount"],
+        freeSpaceCount: json["freePlaceCount"]);
   }
 
   static List<Transport> fromJsonList(List list) {

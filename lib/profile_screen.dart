@@ -16,27 +16,7 @@ import 'package:travel_booking_app/model/ticket.dart';
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
-  static final _formKey = GlobalKey<FormState>();
-  static var myEmailController = TextEditingController();
-  static var mypassController = MaskedTextController(mask: '0000 000000');
   static List<Ticket> _offers = <Ticket>[];
-//  myEmailController.text,  mypassController.text
-
-  Future<void> returnbook(transporting, id) async {
-    http.Response response =
-        await http.post(Uri.https(serverURI, '/api/booking/return', {
-      "transporting": '$transporting',
-      "email": myEmailController.text,
-      'phone': '123',
-      "passport": mypassController.text,
-      'id': '$id'
-    }));
-
-    if (response.statusCode == 200) {
-    } else {
-      // throw Exception('Error');
-    }
-  }
 
   void bookings(context1) {
     Navigator.push(
@@ -167,8 +147,7 @@ class ProfileScreen extends StatelessWidget {
                             returnBook(
                                 context, obj.transporting, obj.id, modalSetter);
 
-                            _offers = await Server.getbookings(
-                                myEmailController.text, mypassController.text);
+                            _offers = await Server.getbookings();
 
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
@@ -216,7 +195,7 @@ class ProfileScreen extends StatelessWidget {
                                     _offers.indexWhere((a) => a.id == id));
                                 try {
                                   (() async {
-                                    returnbook(transporting, id);
+                                    Server.returnbook(transporting, id);
                                   }).withRetries(3);
 
                                   try {
@@ -254,54 +233,37 @@ class ProfileScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Form(
-              key: _formKey,
-              child: Column(
-                spacing: 12,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Реквизиты билетов",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                  ),
-                  TextFormField(
-                    keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
-                      labelText: 'E-mail',
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(18))),
-                    ),
-                    controller: myEmailController,
-                    // The validator receives the text that the user has entered.
-                    validator: (value) {
-                      var re = RegExp(
-                          r'^([A-Za-z0-9.]{1,50})@([A-Za-z0-9.]{1,50})\.([A-Za-z0-9.]{1,5})$');
+            FutureBuilder<Map<String, dynamic>>(
+              future: Server.about(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.data!.isNotEmpty) {
+                  return Column(
+                    spacing: 12,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Реквизиты аккаунта",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        "Id: " + snapshot.data!["id"],
+                      ),
+                      Text(
+                        "E-mail: " + snapshot.data!["email"],
+                      ),
+                      Text(
+                        "Телефон: " + snapshot.data!["phone"],
+                      ),
+                    ],
+                  );
+                }
 
-                      if (value == null ||
-                          value.isEmpty ||
-                          !re.hasMatch(value)) {
-                        return 'Введите правильный эл. адрес';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                        labelText: 'Серия и номер паспорта',
-                        border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(18)))),
-                    controller: mypassController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty || value.length < 10) {
-                        return 'Введите корректные данные паспорта';
-                      }
-                      return null;
-                    },
-                  ),
-                ],
-              ),
+                return Text("Нет соединения с сервером");
+              },
             ),
             ConstrainedBox(
               constraints: BoxConstraints(minHeight: 15, maxHeight: 30),
@@ -322,16 +284,13 @@ class ProfileScreen extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                   ),
                   onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
+                    if (true) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Просмотр данных!')),
                       );
-                      Server.getbookings(
-                          myEmailController.text, mypassController.text);
+                      Server.getbookings();
                       try {
-                        await (() => Server.getbookings(
-                                myEmailController.text, mypassController.text))
-                            .withRetries(3);
+                        await (() => Server.getbookings()).withRetries(3);
                       } catch (q) {
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -375,7 +334,7 @@ class ProfileScreen extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                             builder: (_) =>
-                                new LoginPage(title: 'Пассажирские перевозки')),
+                                LoginPage(title: 'Пассажирские перевозки')),
                       );
 
                       // SystemChannels.platform

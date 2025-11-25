@@ -1,11 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:travel_booking_app/home_screen.dart';
-import 'package:travel_booking_app/login_page.dart';
 import 'package:travel_booking_app/profile_screen.dart';
 import 'package:travel_booking_app/search_screen.dart';
-import 'package:secure_db/secure_db.dart';
-import 'package:travel_booking_app/server.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});

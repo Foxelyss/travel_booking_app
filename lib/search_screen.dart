@@ -116,7 +116,7 @@ class Searchscreen extends State<SearchScreen> {
 
   int mean = -1;
   static Point none =
-      Point(id: -1, town: "", name: "Выберете город", region: "region");
+      Point(id: -1, city: "", name: "Выберете город", region: "region");
   static TransportingMeans allTransportingMeans =
       TransportingMeans(id: -1, name: "Все виды транспорта");
   void openSearchMenu(context) async {

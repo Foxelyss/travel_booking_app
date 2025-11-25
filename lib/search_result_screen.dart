@@ -30,7 +30,7 @@ class _ListViewScreenState extends State<ListViewScreen> {
 
   late final _pagingController = PagingController<int, Transport>(
     getNextPageKey: (state) {
-      int next = (state.keys?.last ?? 0) + 1;
+      int next = (state.keys?.last ?? -1) + 1;
       return nextPage ? next : null;
     },
     fetchPage: (pageKey) => searchTransport(pageKey),
@@ -112,7 +112,7 @@ class _ListViewScreenState extends State<ListViewScreen> {
           child: Column(
             spacing: 10,
             children: [
-              Text(obj.mean),
+              Text(obj.mean[0].name),
               Row(
                 children: [
                   Text.rich(
@@ -232,11 +232,11 @@ class _ListViewScreenState extends State<ListViewScreen> {
                               text: "",
                               children: <TextSpan>[
                                 TextSpan(
-                                    text: "${transport.startPointTown}\n",
+                                    text: "${transport.startPoint.name}\n",
                                     style:
                                         TextStyle(fontWeight: FontWeight.bold)),
                                 TextSpan(
-                                  text: transport.startPoint,
+                                  text: transport.startPoint.region,
                                 ),
                               ],
                             ),
@@ -248,11 +248,11 @@ class _ListViewScreenState extends State<ListViewScreen> {
                               text: "",
                               children: <TextSpan>[
                                 TextSpan(
-                                    text: "${transport.endPointTown}\n",
+                                    text: "${transport.endPoint.name}\n",
                                     style:
                                         TextStyle(fontWeight: FontWeight.bold)),
                                 TextSpan(
-                                  text: transport.endPoint,
+                                  text: transport.endPoint.region,
                                 ),
                               ],
                             ),
@@ -386,7 +386,7 @@ class _ListViewScreenState extends State<ListViewScreen> {
 
   static final border =
       OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(18)));
-  void openBookingMenu(context1, idx) {
+  void openBookingMenu(context1, int idx) {
     Navigator.push(
       context1,
       MaterialPageRoute(builder: (BuildContext bc) {
@@ -477,25 +477,17 @@ class _ListViewScreenState extends State<ListViewScreen> {
                                       middleName = strings[2];
                                     } catch (e) {}
 
-                                    await Server.book(
-                                        idx,
-                                        name,
-                                        surname,
-                                        middleName,
-                                        myMailController.text,
-                                        int.parse(mypassController.unmasked),
-                                        int.parse(myphoneController.unmasked));
+                                    await Server.book(idx, name, surname,
+                                        middleName, mypassController.text);
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(content: Text('Принято!')),
                                     );
 
                                     Navigator.of(context).pop();
-                                    Navigator.of(context1).pop();
                                   } on Exception catch (asd) {
                                     var msg = asd.toString();
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                          content: Text(msg.substring(11))),
+                                      SnackBar(content: Text(msg)),
                                     );
                                   }
                                 }

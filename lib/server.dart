@@ -26,11 +26,14 @@ class Server {
     return token != null;
   }
 
-  static Future<http.Response> command(
-      String path, Map<String, String>? params) async {
+  static Future<http.Response> postCommand(
+      String path, Map<String, String> params) async {
     try {
-      http.Response response =
-          await http.post(Uri.http(serverURI, path, params));
+      http.Response response = await http.post(
+        Uri.http(serverURI, path),
+        body: params,
+        headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
+      );
 
       return response;
     } on SocketException {
@@ -44,25 +47,15 @@ class Server {
     }
   }
 
-  static Future<void> book(int transporting, String name, String surname,
-      String middleName, String email, int passport, int phone) async {
+  static Future<http.Response> getCommand(String path,
+      {Map<String, String>? params}) async {
     try {
-      http.Response response =
-          await http.post(Uri.http(serverURI, '/api/booking/book', {
-        "transporting": "$transporting",
-        "name": name,
-        "surname": surname,
-        "middle_name": middleName,
-        "email": email,
-        "passport": "$passport",
-        "phone": "$phone"
-      }));
+      http.Response response = await http.get(
+        Uri.http(serverURI, path, params),
+        headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
+      );
 
-      if (response.statusCode == 200) {
-        print(response.body);
-      } else {
-        throw Exception(response.body);
-      }
+      return response;
     } on SocketException {
       throw Exception(noConnectionError);
     } on HttpException {
@@ -71,42 +64,78 @@ class Server {
       throw Exception(noConnectionError);
     } on Exception {
       rethrow;
+    }
+  }
+
+  static Future<bool> login(String email, String password) async {
+    http.Response response = await postCommand(
+        '/api/auth/login', {"email": email, "password": password});
+
+    if (response.statusCode == 200) {
+      await SecureDB.setString(
+          "access_token", jsonDecode(response.body)["access_token"]);
+      return true;
+    } else {
+      throw Exception("Error ${response.statusCode}");
+    }
+  }
+
+  static Future<bool> register(
+      String email, String phone, String password) async {
+    http.Response response = await postCommand('/api/auth/register',
+        {"email": email, "phone": phone, "password": password});
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception("Error ${response.statusCode}");
+    }
+  }
+
+  static Future<void> book(int transporting, String name, String surname,
+      String middleName, String passport) async {
+    http.Response response = await postCommand('/api/booking/book', {
+      "transporting": "$transporting",
+      "name": name,
+      "surname": surname,
+      "middleName": middleName,
+      "passport": passport,
+    });
+
+    print(transporting);
+    print(response.request!);
+    print(response.statusCode);
+    print(response.headers);
+    print(response.body);
+    if (response.statusCode == 200) {
+    } else {
+      throw Exception(response.body);
     }
   }
 
   static Future<List<Transport>> searchTransport(
       int pointA, int pointB, int wantedTime, int mean, int page) async {
-    try {
-      http.Response response =
-          await http.get(Uri.http(serverURI, '/api/search/search', {
-        'point_a': '$pointA',
-        'point_b': '$pointB',
-        'quantity': '12',
-        'wanted_time': '$wantedTime',
-        'mean': '$mean',
-        'page': '$page'
-      }));
+    http.Response response = await getCommand('/api/search/search', params: {
+      'point_a': '$pointA',
+      'point_b': '$pointB',
+      'wanted_time': '$wantedTime',
+      'mean': '$mean',
+      'page': '$page'
+    });
 
-      if (response.statusCode == 200) {
-        var pointsJson = jsonDecode(utf8.decode(response.bodyBytes));
-        return Transport.fromJsonList(pointsJson);
-      } else {
-        throw Exception("Ошибка сервера");
-      }
-    } on SocketException {
-      throw Exception(noConnectionError);
-    } on HttpException {
-      rethrow;
-    } on http.ClientException {
-      throw Exception(noConnectionError);
-    } on Exception {
-      rethrow;
+    if (response.statusCode == 200) {
+      print("${response.body}\n$pointA $pointB $mean $page");
+
+      var pointsJson = jsonDecode(utf8.decode(response.bodyBytes));
+      return Transport.fromJsonList(pointsJson);
+    } else {
+      throw Exception("Ошибка сервера");
     }
   }
 
   static Future<List<Point>> getPoints() async {
     http.Response response =
-        await http.get(Uri.http(serverURI, '/api/search/points'));
+        await http.get(Uri.http(serverURI, '/api/point/all'));
 
     if (response.statusCode == 200) {
     } else {
@@ -118,8 +147,7 @@ class Server {
   }
 
   static Future<List<TransportingMeans>> getMeans() async {
-    http.Response response =
-        await http.get(Uri.http(serverURI, '/api/search/means'));
+    http.Response response = await getCommand('/api/mean/all');
 
     if (response.statusCode == 200) {
     } else {
@@ -132,11 +160,8 @@ class Server {
     return means;
   }
 
-  static Future<List<Ticket>> getbookings(email, passport) async {
-    http.Response response = await http.get(Uri.http(
-        serverURI,
-        '/api/booking/books',
-        {"transporting": '1', "email": email, "passport": passport}));
+  static Future<List<Ticket>> getbookings() async {
+    http.Response response = await getCommand('/api/booking/bookings');
 
     if (response.statusCode == 200) {
     } else {
@@ -146,20 +171,27 @@ class Server {
     return Ticket.fromJsonList(jsonDecode(utf8.decode(response.bodyBytes)));
   }
 
-  static Future<void> returnbook(transporting, id, email, passport) async {
-    http.Response response =
-        await http.post(Uri.http(serverURI, '/api/booking/return', {
-      "transporting": '$transporting',
-      "email": email,
-      'phone': '123',
-      "passport": passport,
-      'id': '$id'
-    }));
+  static Future<void> returnbook(transporting, id) async {
+    http.Response response = await postCommand(
+        '/api/booking/return', {"transporting": '$transporting', 'id': '$id'});
 
     if (response.statusCode == 200) {
     } else {
       throw Exception('Error');
     }
+  }
+
+  static Future<Map<String, dynamic>> about() async {
+    http.Response response = await getCommand('/api/auth/about');
+
+    print(response.statusCode);
+    print(response.body);
+    if (response.statusCode == 200) {
+    } else {
+      throw Exception('Error');
+    }
+    var meansJson = jsonDecode(utf8.decode(response.bodyBytes));
+    return meansJson;
   }
 
   static String russianDays(int n) {

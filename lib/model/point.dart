@@ -1,12 +1,12 @@
 class Point {
   final int id;
-  final String town;
+  final String city;
   final String name;
   final String region;
 
   Point({
     required this.id,
-    required this.town,
+    required this.city,
     required this.name,
     required this.region,
   });
@@ -14,7 +14,7 @@ class Point {
   factory Point.fromJson(Map<String, dynamic> json) {
     return Point(
       id: json["id"],
-      town: json["town"],
+      city: json["city"],
       name: json["name"],
       region: json["region"],
     );
@@ -31,7 +31,7 @@ class Point {
 
   ///this method will prevent the override of toString
   bool userFilterByCreationDate(String filter) {
-    return town.toString().contains(filter);
+    return city.toString().contains(filter);
   }
 
   ///custom comparing function to check if two users are equal
