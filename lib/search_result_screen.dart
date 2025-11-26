@@ -10,7 +10,7 @@ import 'package:travel_booking_app/paginator/pagination_messages.dart';
 class ListViewScreen extends StatefulWidget {
   final int pointA;
   final int pointB;
-  final int wantedTime;
+  final DateTime wantedTime;
   final int mean;
 
   const ListViewScreen({

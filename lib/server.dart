@@ -114,11 +114,11 @@ class Server {
   }
 
   static Future<List<Transport>> searchTransport(
-      int pointA, int pointB, int wantedTime, int mean, int page) async {
+      int pointA, int pointB, DateTime wantedTime, int mean, int page) async {
     http.Response response = await getCommand('/api/search/search', params: {
       'point_a': '$pointA',
       'point_b': '$pointB',
-      'wanted_time': '$wantedTime',
+      'wanted_time': wantedTime.toIso8601String(),
       'mean': '$mean',
       'page': '$page'
     });
@@ -134,8 +134,7 @@ class Server {
   }
 
   static Future<List<Point>> getPoints() async {
-    http.Response response =
-        await http.get(Uri.http(serverURI, '/api/point/all'));
+    http.Response response = await getCommand('/api/point/all');
 
     if (response.statusCode == 200) {
     } else {
@@ -171,9 +170,9 @@ class Server {
     return Ticket.fromJsonList(jsonDecode(utf8.decode(response.bodyBytes)));
   }
 
-  static Future<void> returnbook(transporting, id) async {
-    http.Response response = await postCommand(
-        '/api/booking/return', {"transporting": '$transporting', 'id': '$id'});
+  static Future<void> returnbook(id) async {
+    http.Response response =
+        await postCommand('/api/booking/return', {'id': '$id'});
 
     if (response.statusCode == 200) {
     } else {

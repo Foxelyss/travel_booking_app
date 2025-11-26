@@ -8,8 +8,6 @@ class TransportAggregator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget homepage;
-
     return MaterialApp(
       title: 'Пассажирские перевозки',
       theme: ThemeData(

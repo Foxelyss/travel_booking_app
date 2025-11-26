@@ -48,7 +48,8 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget createTransporting(context, Ticket obj, StateSetter modalSetter) {
+  Widget createTransporting(
+      BuildContext context, Ticket obj, StateSetter modalSetter) {
     var time = "";
     var diff = obj.end.difference(obj.start);
     var hours = diff.inHours - diff.inDays * 24;
@@ -195,7 +196,7 @@ class ProfileScreen extends StatelessWidget {
                                     _offers.indexWhere((a) => a.id == id));
                                 try {
                                   (() async {
-                                    Server.returnbook(transporting, id);
+                                    Server.returnbook(id);
                                   }).withRetries(3);
 
                                   try {
@@ -234,7 +235,14 @@ class ProfileScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             FutureBuilder<Map<String, dynamic>>(
-              future: Server.about(),
+              future: () async {
+                while (true) {
+                  try {
+                    var about = await Server.about();
+                    return about;
+                  } on Exception {}
+                }
+              }(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return const Center(child: CircularProgressIndicator());

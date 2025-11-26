@@ -65,9 +65,7 @@ class Searchscreen extends State<SearchScreen> {
             pointA: pointA,
             pointB: pointB,
             mean: mean,
-            wantedTime: selectedDate != null
-                ? selectedDate!.millisecondsSinceEpoch ~/ 1000
-                : 0,
+            wantedTime: selectedDate ?? DateTime.now(),
           ))
         ],
       ),

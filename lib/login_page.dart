@@ -90,12 +90,14 @@ class LoginPage extends StatelessWidget {
                               myEmailController.clear();
                               myPasswordController.clear();
 
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) => MyHomePage(
-                                        title: 'Пассажирские перевозки')),
-                              );
+                              if (context.mounted) {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => MyHomePage(
+                                          title: 'Пассажирские перевозки')),
+                                );
+                              }
                             }
                           }
                         },
@@ -106,7 +108,7 @@ class LoginPage extends StatelessWidget {
         ));
   }
 
-  void openRegistrationMenu(context1) {
+  void openRegistrationMenu(BuildContext context1) {
     Navigator.push(
       context1,
       MaterialPageRoute(builder: (BuildContext bc) {
@@ -218,12 +220,14 @@ class LoginPage extends StatelessWidget {
                                         Navigator.of(context1).pop();
                                       });
 
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                            content: Text(
-                                                'Подтвердите почту и войдите в аккаунт!')),
-                                      );
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                              content: Text(
+                                                  'Подтвердите почту и войдите в аккаунт!')),
+                                        );
+                                      }
                                     }
                                   }
                                 },
