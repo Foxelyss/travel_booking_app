@@ -1,10 +1,7 @@
 import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter/material.dart';
-import 'package:secure_db/secure_db.dart';
 import 'package:travel_booking_app/home_page_screen.dart';
-import 'package:travel_booking_app/home_screen.dart';
 import 'package:travel_booking_app/server.dart';
-import 'package:travel_booking_app/transport_aggregator.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key, required this.title});
@@ -186,7 +183,7 @@ class LoginPage extends StatelessWidget {
                             return 'Введите правильный пароль';
                           }
 
-                          if (passwordRegistrationController.text == value) {
+                          if (passwordRegistrationController.text != value) {
                             return 'Пароль не совпадает';
                           }
                           return null;

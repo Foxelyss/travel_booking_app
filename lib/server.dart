@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:secure_db/secure_db.dart';
 import 'package:travel_booking_app/config.dart';
@@ -74,6 +75,7 @@ class Server {
     if (response.statusCode == 200) {
       await SecureDB.setString(
           "access_token", jsonDecode(response.body)["access_token"]);
+      token = jsonDecode(response.body)["access_token"];
       return true;
     } else {
       throw Exception("Error ${response.statusCode}");
@@ -88,6 +90,7 @@ class Server {
     if (response.statusCode == 200) {
       return true;
     } else {
+      print(response.body);
       throw Exception("Error ${response.statusCode}");
     }
   }
@@ -170,24 +173,24 @@ class Server {
     return Ticket.fromJsonList(jsonDecode(utf8.decode(response.bodyBytes)));
   }
 
-  static Future<void> returnbook(id) async {
+  static Future<void> returnbook(int id) async {
     http.Response response =
         await postCommand('/api/booking/return', {'id': '$id'});
 
     if (response.statusCode == 200) {
     } else {
-      throw Exception('Error');
+      throw Exception(response.statusCode);
     }
   }
 
   static Future<Map<String, dynamic>> about() async {
     http.Response response = await getCommand('/api/auth/about');
 
+    print(response.request!.url);
     print(response.statusCode);
-    print(response.body);
     if (response.statusCode == 200) {
     } else {
-      throw Exception('Error');
+      throw ErrorDescription('Error');
     }
     var meansJson = jsonDecode(utf8.decode(response.bodyBytes));
     return meansJson;

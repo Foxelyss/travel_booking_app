@@ -1,14 +1,19 @@
+import 'package:travel_booking_app/model/point.dart';
+import 'package:travel_booking_app/model/transporting_means.dart';
+
 class Ticket {
   final int id;
   final int transporting;
-  final String startPoint;
-  final String endPoint;
+  final Point startPoint;
+  final Point endPoint;
   final String name;
   final DateTime start;
   final DateTime end;
   final double price;
-  final String mean;
+  final List<TransportingMeans> mean;
   final String company;
+  final String status;
+  final int statusId;
 
   Ticket({
     required this.id,
@@ -21,20 +26,25 @@ class Ticket {
     required this.price,
     required this.mean,
     required this.company,
+    required this.status,
+    required this.statusId,
   });
 
   factory Ticket.fromJson(Map<String, dynamic> json) {
     return Ticket(
       id: json["id"],
-      transporting: json["transporting"],
-      name: json["name"],
-      start: DateTime.parse(json["start"]),
-      end: DateTime.parse(json["end"]),
-      startPoint: json["startPoint"],
-      endPoint: json["endPoint"],
+      transporting: json["transportation"]["id"],
+      name: json["transportation"]["name"],
+      start: DateTime.parse(json["transportation"]["departure"]),
+      end: DateTime.parse(json["transportation"]["arrival"]),
+      startPoint: Point.fromJson(json["transportation"]["departurePoint"]),
+      endPoint: Point.fromJson(json["transportation"]["arrivalPoint"]),
       price: json["price"],
-      mean: json["mean"],
-      company: json["company"],
+      mean: TransportingMeans.fromJsonList(
+          json["transportation"]["transportingMeans"]),
+      company: json["transportation"]["companyName"],
+      status: json["status"],
+      statusId: json["statusId"],
     );
   }
 

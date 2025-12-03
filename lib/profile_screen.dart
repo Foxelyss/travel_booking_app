@@ -1,13 +1,8 @@
-import 'dart:convert';
-
-import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:secure_db/secure_db.dart';
-import 'dart:async';
 import 'package:travel_booking_app/config.dart';
 import 'package:travel_booking_app/login_page.dart';
 import 'package:travel_booking_app/server.dart';
@@ -90,9 +85,9 @@ class ProfileScreen extends StatelessWidget {
             ),
             Row(
               children: [
-                Text(obj.startPoint),
+                Text(obj.startPoint.city),
                 Expanded(child: Divider()),
-                Text(obj.endPoint),
+                Text(obj.endPoint.city),
               ],
             ),
             Row(
@@ -133,7 +128,7 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ],
             ),
-            Text(obj.mean),
+            Text(obj.mean.join(", ")),
             Divider(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -142,13 +137,21 @@ class ProfileScreen extends StatelessWidget {
                 Text(
                     "${obj.price.toStringAsFixed(2).replaceFirst(".", ",")} ₽"),
                 TextButton(
-                    onPressed: DateTime.now().difference(obj.start).inSeconds <=
-                            0
+                    onPressed: obj.status != "Cancelled"
                         ? () async {
                             returnBook(
                                 context, obj.transporting, obj.id, modalSetter);
+                            print(obj.status);
 
-                            _offers = await Server.getbookings();
+                            try {
+                              _offers = await Server.getbookings();
+                            } on Exception {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content:
+                                        Text('Ошибка в обновлении данных!')),
+                              );
+                            }
 
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
@@ -159,7 +162,8 @@ class ProfileScreen extends StatelessWidget {
                     style: TextButton.styleFrom(
                         foregroundColor: Colors.pink,
                         side: BorderSide(style: BorderStyle.none)),
-                    child: Text("Отказаться"))
+                    child: Text(
+                        obj.status != "Cancelled" ? "Отказаться" : "Отменён"))
               ],
             ),
           ],
@@ -191,21 +195,23 @@ class ProfileScreen extends StatelessWidget {
                               style: TextButton.styleFrom(
                                   backgroundColor: Colors.red,
                                   side: BorderSide(style: BorderStyle.none)),
-                              onPressed: () {
-                                _offers.removeAt(
-                                    _offers.indexWhere((a) => a.id == id));
+                              onPressed: () async {
                                 try {
-                                  (() async {
+                                  await (() async {
                                     Server.returnbook(id);
                                   }).withRetries(3);
-
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text('Успешно отменено!')),
+                                  );
                                   try {
-                                    _offers.removeAt(
-                                        _offers.indexWhere((a) => a.id == id));
+                                    await (() async {
+                                      _offers = await Server.getbookings();
+                                    }).withRetries(3);
                                   } catch (a) {
                                     ();
                                   }
-                                } catch (q) {
+                                } on Exception catch (q) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                         content: Text('Проблема с сервисом!')),
@@ -240,7 +246,21 @@ class ProfileScreen extends StatelessWidget {
                   try {
                     var about = await Server.about();
                     return about;
+                  } on ErrorDescription catch (e) {
+                    if (e.toString() == "Error") {
+                      await SecureDB.remove('access_token');
+
+                      // Reload app
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) =>
+                                LoginPage(title: 'Пассажирские перевозки')),
+                      );
+                    }
                   } on Exception {}
+
+                  await Future.delayed(Duration(seconds: 15));
                 }
               }(),
               builder: (context, snapshot) {
@@ -296,9 +316,11 @@ class ProfileScreen extends StatelessWidget {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Просмотр данных!')),
                       );
-                      Server.getbookings();
+
                       try {
-                        await (() => Server.getbookings()).withRetries(3);
+                        await (() async {
+                          _offers = await Server.getbookings();
+                        }).withRetries(3);
                       } catch (q) {
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -313,9 +335,7 @@ class ProfileScreen extends StatelessWidget {
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content:
-                                    Text('Чеков нет или неверные данные!')),
+                            const SnackBar(content: Text('Чеков нет')),
                           );
                         }
                       } else {
@@ -337,18 +357,40 @@ class ProfileScreen extends StatelessWidget {
                     onPressed: () async {
                       await SecureDB.remove('access_token');
 
-                      // Reload app
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                             builder: (_) =>
                                 LoginPage(title: 'Пассажирские перевозки')),
                       );
-
-                      // SystemChannels.platform
-                      //     .invokeMethod('SystemNavigator.pop');
                     },
                     icon: Icon(Icons.logout_rounded),
+                    style: ButtonStyle(
+                      alignment: Alignment.centerLeft,
+                      iconColor: WidgetStatePropertyAll(Colors.red),
+                    ),
+                    label: Text(
+                      "Выход из аккаунта",
+                      style: TextStyle(
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: TextButton.icon(
+                    onPressed: () async {
+                      SystemChannels.platform
+                          .invokeMethod('SystemNavigator.pop');
+                    },
+                    icon: Icon(Icons.exit_to_app),
                     style: ButtonStyle(
                       alignment: Alignment.centerLeft,
                       iconColor: WidgetStatePropertyAll(Colors.red),
