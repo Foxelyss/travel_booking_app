@@ -31,7 +31,7 @@ class Server {
       String path, Map<String, String> params) async {
     try {
       http.Response response = await http.post(
-        Uri.http(serverURI, path),
+        Uri.https(serverURI, path),
         body: params,
         headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
       );
@@ -52,7 +52,7 @@ class Server {
       {Map<String, String>? params}) async {
     try {
       http.Response response = await http.get(
-        Uri.http(serverURI, path, params),
+        Uri.https(serverURI, path, params),
         headers: {HttpHeaders.authorizationHeader: "Bearer $token"},
       );
 

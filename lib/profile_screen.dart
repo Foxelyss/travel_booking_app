@@ -141,10 +141,10 @@ class ProfileScreen extends StatelessWidget {
                         ? () async {
                             returnBook(
                                 context, obj.transporting, obj.id, modalSetter);
-                            print(obj.status);
 
                             try {
                               _offers = await Server.getbookings();
+                              modalSetter(() {});
                             } on Exception {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -208,10 +208,11 @@ class ProfileScreen extends StatelessWidget {
                                     await (() async {
                                       _offers = await Server.getbookings();
                                     }).withRetries(3);
+                                    stateSetter(() {});
                                   } catch (a) {
                                     ();
                                   }
-                                } on Exception catch (q) {
+                                } on Exception {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                         content: Text('Проблема с сервисом!')),
@@ -258,7 +259,7 @@ class ProfileScreen extends StatelessWidget {
                                 LoginPage(title: 'Пассажирские перевозки')),
                       );
                     }
-                  } on Exception {}
+                  }
 
                   await Future.delayed(Duration(seconds: 15));
                 }
