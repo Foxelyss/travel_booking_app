@@ -145,6 +145,10 @@ class ProfileScreen extends StatelessWidget {
                             try {
                               _offers = await Server.getbookings();
                               modalSetter(() {});
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Обновление данных!')),
+                              );
                             } on Exception {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -152,11 +156,6 @@ class ProfileScreen extends StatelessWidget {
                                         Text('Ошибка в обновлении данных!')),
                               );
                             }
-
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text('Обновление данных!')),
-                            );
                           }
                         : null,
                     style: TextButton.styleFrom(
@@ -209,6 +208,13 @@ class ProfileScreen extends StatelessWidget {
                                       _offers = await Server.getbookings();
                                     }).withRetries(3);
                                     stateSetter(() {});
+                                  } catch (a) {
+                                    ();
+                                  }
+                                  try {
+                                    _offers[_offers
+                                            .indexWhere((a) => a.id == id)]
+                                        .status = "Cancelled";
                                   } catch (a) {
                                     ();
                                   }

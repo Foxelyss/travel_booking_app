@@ -12,8 +12,8 @@ class Ticket {
   final double price;
   final List<TransportingMeans> mean;
   final String company;
-  final String status;
-  final int statusId;
+  String status;
+  int statusId;
 
   Ticket({
     required this.id,
