@@ -112,7 +112,7 @@ class _ListViewScreenState extends State<ListViewScreen> {
           child: Column(
             spacing: 10,
             children: [
-              Text(obj.mean[0].name),
+              Text(obj.mean.join(", ")),
               Row(
                 children: [
                   Text.rich(
@@ -323,7 +323,7 @@ class _ListViewScreenState extends State<ListViewScreen> {
                             TextSpan(
                                 text: "Тип перевозки: ",
                                 style: TextStyle(fontWeight: FontWeight.bold)),
-                            TextSpan(text: "${transport.mean}\n"),
+                            TextSpan(text: "${transport.mean.join(", ")}\n"),
                             TextSpan(
                                 text: "Наличие мест: ",
                                 style: TextStyle(fontWeight: FontWeight.bold)),
@@ -424,37 +424,37 @@ class _ListViewScreenState extends State<ListViewScreen> {
                           return null;
                         },
                       ),
-                      TextFormField(
-                        keyboardType: TextInputType.phone,
-                        decoration: InputDecoration(
-                            labelText: 'Телефон', border: border),
-                        controller: myphoneController,
-                        validator: (value) {
-                          if (value == null ||
-                              value.isEmpty ||
-                              value.length < 17) {
-                            return 'Введите правильный телефон';
-                          }
-                          return null;
-                        },
-                      ),
-                      TextFormField(
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
-                            labelText: 'E-mail', border: border),
-                        controller: myMailController,
-                        // The validator receives the text that the user has entered.
-                        validator: (value) {
-                          var re = RegExp(
-                              r'^([A-Za-z0-9.]{1,50})@([A-Za-z0-9.]{1,50})\.([A-Za-z0-9.]{1,5})$');
-                          if (value == null ||
-                              value.isEmpty ||
-                              !re.hasMatch(value)) {
-                            return 'Введите правильный эл. адрес';
-                          }
-                          return null;
-                        },
-                      ),
+                      // TextFormField(
+                      //   keyboardType: TextInputType.phone,
+                      //   decoration: InputDecoration(
+                      //       labelText: 'Телефон', border: border),
+                      //   controller: myphoneController,
+                      //   validator: (value) {
+                      //     if (value == null ||
+                      //         value.isEmpty ||
+                      //         value.length < 17) {
+                      //       return 'Введите правильный телефон';
+                      //     }
+                      //     return null;
+                      //   },
+                      // ),
+                      // TextFormField(
+                      //   keyboardType: TextInputType.emailAddress,
+                      //   decoration: InputDecoration(
+                      //       labelText: 'E-mail', border: border),
+                      //   controller: myMailController,
+                      //   // The validator receives the text that the user has entered.
+                      //   validator: (value) {
+                      //     var re = RegExp(
+                      //         r'^([A-Za-z0-9.]{1,50})@([A-Za-z0-9.]{1,50})\.([A-Za-z0-9.]{1,5})$');
+                      //     if (value == null ||
+                      //         value.isEmpty ||
+                      //         !re.hasMatch(value)) {
+                      //       return 'Введите правильный эл. адрес';
+                      //     }
+                      //     return null;
+                      //   },
+                      // ),
                       Spacer(),
                       Row(
                         children: [

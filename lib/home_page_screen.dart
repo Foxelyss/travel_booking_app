@@ -30,7 +30,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _selectedIndex = 1;
     });
 
-    key.currentState!.selectDestination(3, "Казань");
+    key.currentState!.selectDestination(4, "Казань");
   }
 
   late Function a;
