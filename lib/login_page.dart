@@ -25,7 +25,7 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white70,
-          title: Text("Сначала пройдите авторизацию"),
+          title: Text("Сначала войдите!"),
         ),
         body: Padding(
             padding: const EdgeInsets.all(16.0),
