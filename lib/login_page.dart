@@ -9,7 +9,7 @@ class LoginPage extends StatelessWidget {
   final String title;
 
   static final _loginFormKey = GlobalKey<FormState>();
-  static final _registrationFormKey2 = GlobalKey<FormState>();
+  static final _registrationFormKey = GlobalKey<FormState>();
 
   static var myEmailController = TextEditingController();
   static var myPasswordController = TextEditingController();
@@ -123,7 +123,7 @@ class LoginPage extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.all(15),
                 child: Form(
-                  key: _registrationFormKey2,
+                  key: _registrationFormKey,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     spacing: 16,
@@ -208,7 +208,7 @@ class LoginPage extends StatelessWidget {
                         Expanded(
                             child: ElevatedButton(
                                 onPressed: () async {
-                                  if (_registrationFormKey2.currentState!
+                                  if (_registrationFormKey.currentState!
                                       .validate()) {
                                     if (await Server.register(
                                         emailRegistrationController.text,
