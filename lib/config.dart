@@ -1,4 +1,3 @@
-// final serverURI = 'localhost:5165';
 final serverURI = 'travel.foxelyss.ru';
 
 extension Retry<T> on Future<T> Function() {

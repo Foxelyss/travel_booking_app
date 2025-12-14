@@ -257,7 +257,6 @@ class ProfileScreen extends StatelessWidget {
                     if (e.toString() == "Error") {
                       await SecureDB.remove('access_token');
 
-                      // Reload app
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(

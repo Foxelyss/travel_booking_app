@@ -40,7 +40,6 @@ class LoginPage extends StatelessWidget {
                       borderRadius: BorderRadius.all(Radius.circular(18))),
                 ),
                 controller: myEmailController,
-                // The validator receives the text that the user has entered.
                 validator: (value) {
                   var re = RegExp(
                       r'^([A-Za-z0-9.]{1,50})@([A-Za-z0-9.]{1,50})\.([A-Za-z0-9.]{1,5})$');
@@ -132,7 +131,6 @@ class LoginPage extends StatelessWidget {
                                   BorderRadius.all(Radius.circular(18))),
                         ),
                         controller: emailRegistrationController,
-                        // The validator receives the text that the user has entered.
                         validator: (value) {
                           var re = RegExp(
                               r'^([A-Za-z0-9.]{1,50})@([A-Za-z0-9.]{1,50})\.([A-Za-z0-9.]{1,5})$');

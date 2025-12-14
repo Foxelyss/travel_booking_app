@@ -191,7 +191,6 @@ class _ListViewScreenState extends State<ListViewScreen> {
       MaterialPageRoute(builder: (BuildContext bc) {
         return StatefulBuilder(
             builder: (BuildContext context, StateSetter setModalState) {
-          // DateFormat('dd.MM.yyyy HH:mm').format(transport.start)
           return Scaffold(
             appBar: AppBar(title: const Text('О транспорте')),
             body: Padding(
@@ -355,8 +354,6 @@ class _ListViewScreenState extends State<ListViewScreen> {
         });
       }),
     );
-
-    // openBookingMenu(context, obj.id);
   }
 
   final _formKey = GlobalKey<FormState>();
@@ -424,37 +421,6 @@ class _ListViewScreenState extends State<ListViewScreen> {
                           return null;
                         },
                       ),
-                      // TextFormField(
-                      //   keyboardType: TextInputType.phone,
-                      //   decoration: InputDecoration(
-                      //       labelText: 'Телефон', border: border),
-                      //   controller: myphoneController,
-                      //   validator: (value) {
-                      //     if (value == null ||
-                      //         value.isEmpty ||
-                      //         value.length < 17) {
-                      //       return 'Введите правильный телефон';
-                      //     }
-                      //     return null;
-                      //   },
-                      // ),
-                      // TextFormField(
-                      //   keyboardType: TextInputType.emailAddress,
-                      //   decoration: InputDecoration(
-                      //       labelText: 'E-mail', border: border),
-                      //   controller: myMailController,
-                      //   // The validator receives the text that the user has entered.
-                      //   validator: (value) {
-                      //     var re = RegExp(
-                      //         r'^([A-Za-z0-9.]{1,50})@([A-Za-z0-9.]{1,50})\.([A-Za-z0-9.]{1,5})$');
-                      //     if (value == null ||
-                      //         value.isEmpty ||
-                      //         !re.hasMatch(value)) {
-                      //       return 'Введите правильный эл. адрес';
-                      //     }
-                      //     return null;
-                      //   },
-                      // ),
                       Spacer(),
                       Row(
                         children: [

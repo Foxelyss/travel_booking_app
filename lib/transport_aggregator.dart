@@ -73,8 +73,7 @@ class TransportAggregator extends StatelessWidget {
           }
 
           if (snapshot.data == true) {
-            return const MyHomePage(
-                title: 'Пассажирские перевозки'); // your existing multi-page UI
+            return const MyHomePage(title: 'Пассажирские перевозки');
           }
 
           return LoginPage(title: "Пройдите вход!");
