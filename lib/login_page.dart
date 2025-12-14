@@ -27,81 +27,87 @@ class LoginPage extends StatelessWidget {
           backgroundColor: Colors.white70,
           title: Text("Сначала пройдите авторизацию"),
         ),
-        body: Form(
-          key: _loginFormKey,
-          child: Column(
-            spacing: 16,
-            children: [
-              TextFormField(
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                  labelText: 'E-mail',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(18))),
-                ),
-                controller: myEmailController,
-                validator: (value) {
-                  var re = RegExp(
-                      r'^([A-Za-z0-9.]{1,50})@([A-Za-z0-9.]{1,50})\.([A-Za-z0-9.]{1,5})$');
+        body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Form(
+              key: _loginFormKey,
+              child: Column(
+                spacing: 16,
+                children: [
+                  TextFormField(
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      labelText: 'E-mail',
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(18))),
+                    ),
+                    controller: myEmailController,
+                    validator: (value) {
+                      var re = RegExp(
+                          r'^([A-Za-z0-9.]{1,50})@([A-Za-z0-9.]{1,50})\.([A-Za-z0-9.]{1,5})$');
 
-                  if (value == null || value.isEmpty || !re.hasMatch(value)) {
-                    return 'Введите правильный эл. адрес';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                  labelText: 'Пароль',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(18))),
-                ),
-                controller: myPasswordController,
-                validator: (value) {
-                  var re = RegExp(r'^([A-Za-z0-9.]{1,50})$');
+                      if (value == null ||
+                          value.isEmpty ||
+                          !re.hasMatch(value)) {
+                        return 'Введите правильный эл. адрес';
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      labelText: 'Пароль',
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(18))),
+                    ),
+                    controller: myPasswordController,
+                    validator: (value) {
+                      var re = RegExp(r'^([A-Za-z0-9.]{1,50})$');
 
-                  if (value == null || value.isEmpty || !re.hasMatch(value)) {
-                    return 'Введите правильный пароль';
-                  }
-                  return null;
-                },
-              ),
-              Spacer(),
-              Row(children: [
-                Expanded(
-                    child: TextButton(
-                        onPressed: () {
-                          openRegistrationMenu(context);
-                        },
-                        child: Text("Регистрация"))),
-              ]),
-              Row(children: [
-                Expanded(
-                    child: ElevatedButton(
-                        onPressed: () async {
-                          if (_loginFormKey.currentState!.validate()) {
-                            if (await Server.login(myEmailController.text,
-                                myPasswordController.text)) {
-                              myEmailController.clear();
-                              myPasswordController.clear();
+                      if (value == null ||
+                          value.isEmpty ||
+                          !re.hasMatch(value)) {
+                        return 'Введите правильный пароль';
+                      }
+                      return null;
+                    },
+                  ),
+                  Spacer(),
+                  Row(children: [
+                    Expanded(
+                        child: TextButton(
+                            onPressed: () {
+                              openRegistrationMenu(context);
+                            },
+                            child: Text("Регистрация"))),
+                  ]),
+                  Row(children: [
+                    Expanded(
+                        child: ElevatedButton(
+                            onPressed: () async {
+                              if (_loginFormKey.currentState!.validate()) {
+                                if (await Server.login(myEmailController.text,
+                                    myPasswordController.text)) {
+                                  myEmailController.clear();
+                                  myPasswordController.clear();
 
-                              if (context.mounted) {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (_) => MyHomePage(
-                                          title: 'Пассажирские перевозки')),
-                                );
+                                  if (context.mounted) {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (_) => MyHomePage(
+                                              title: 'Пассажирские перевозки')),
+                                    );
+                                  }
+                                }
                               }
-                            }
-                          }
-                        },
-                        child: Text("Вход!")))
-              ])
-            ],
-          ),
-        ));
+                            },
+                            child: Text("Вход!")))
+                  ])
+                ],
+              ),
+            )));
   }
 
   void openRegistrationMenu(BuildContext context1) {
