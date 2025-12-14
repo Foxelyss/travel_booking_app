@@ -90,7 +90,6 @@ class Server {
     if (response.statusCode == 200) {
       return true;
     } else {
-      print(response.body);
       throw Exception("Error ${response.statusCode}");
     }
   }
@@ -105,11 +104,6 @@ class Server {
       "passport": passport,
     });
 
-    print(transporting);
-    print(response.request!);
-    print(response.statusCode);
-    print(response.headers);
-    print(response.body);
     if (response.statusCode == 200) {
     } else {
       throw Exception(response.body);
@@ -127,8 +121,6 @@ class Server {
     });
 
     if (response.statusCode == 200) {
-      print("${response.body}\n$pointA $pointB $mean $page");
-
       var pointsJson = jsonDecode(utf8.decode(response.bodyBytes));
       return Transport.fromJsonList(pointsJson);
     } else {
@@ -186,8 +178,6 @@ class Server {
   static Future<Map<String, dynamic>> about() async {
     http.Response response = await getCommand('/api/auth/about');
 
-    print(response.request!.url);
-    print(response.statusCode);
     if (response.statusCode == 200) {
     } else {
       throw ErrorDescription('Error');
